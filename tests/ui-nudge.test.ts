@@ -81,11 +81,14 @@ describe('the nudge — desktop prompt chip', () => {
     initPrompt(root())
   })
 
-  it('marks the key chip to nudge whenever a prompt is shown, and leaves nothing behind when it is not', () => {
-    events.emit('ui:prompt', { text: null })
-    expect(root().querySelector('.pkey')).toBeNull()
+  it('marks the key chip to nudge whenever a prompt is shown, and takes the chip off screen when it is not', () => {
     events.emit('ui:prompt', { text: 'Talk to Bo', key: 'E' })
     expect(root().querySelector('.pkey')?.classList.contains('nudge')).toBe(true)
+    // Nothing in reach hides the whole chip. (Asserting the `.pkey` is absent
+    // *before* the first prompt would pass on an empty overlay and prove
+    // nothing; what matters is that the ring goes away again.)
+    events.emit('ui:prompt', { text: null })
+    expect(root().querySelector('.prompt')?.classList.contains('show')).toBe(false)
   })
 })
 
@@ -155,12 +158,19 @@ describe('the nudge — ride card Next', () => {
     initRidecard()
   })
 
-  it('carries the nudge whenever a beat is up', () => {
+  it('carries the nudge whenever a beat is up, and only then', () => {
+    // Next is minted with the ring on it and never loses the class, so what
+    // decides whether the ring is *on screen* is the card's own `hidden` —
+    // that is what this asserts, in both directions. (`reducedMotion` is on
+    // above, so the card hides without waiting out its slide.)
+    const next0 = document.querySelector('.ride-next') as HTMLElement
+    expect(next0.classList.contains('nudge')).toBe(true)
+    expect((document.querySelector('.ride-card') as HTMLElement).hidden).toBe(true)
     events.emit('ui:panel', { id: 'ridecard', data: COASTER_STOPS[0] })
     const card = document.querySelector('.ride-card') as HTMLElement
-    const next = document.querySelector('.ride-next') as HTMLElement
     expect(card.hidden).toBe(false)
-    expect(next.classList.contains('nudge')).toBe(true)
+    events.emit('ui:panel', { id: 'ridecard', data: null })
+    expect(card.hidden).toBe(true)
   })
 })
 
@@ -177,11 +187,17 @@ describe('the nudge — welcome Start', () => {
     vi.restoreAllMocks()
   })
 
-  it('nudges Start while the welcome card is open', () => {
-    events.emit('ui:title', { hasSave: false })
-    expect(isWelcomeOpen()).toBe(true)
+  it('nudges Start while the welcome card is open, and not once it is gone', () => {
+    // Start is minted with the ring and keeps the class for the session, so —
+    // as with the ride card — the behaviour under test is the card's own
+    // visibility: the ring is on screen exactly while the card is.
     const start = document.querySelector('.welcome-actions .primary') as HTMLElement
     expect(start.classList.contains('nudge')).toBe(true)
+    expect(isWelcomeOpen()).toBe(false)
+    events.emit('ui:title', { hasSave: false })
+    expect(isWelcomeOpen()).toBe(true)
+    ;(start as HTMLButtonElement).click()
+    expect(isWelcomeOpen()).toBe(false)
   })
 })
 

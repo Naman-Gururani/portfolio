@@ -165,16 +165,16 @@ export function openMap(data?: { focus?: string }): void {
     })
     const a = attractionFor(id)
     if (!a) return
-    if (discovered.has(a.id)) {
+    const known = discovered.has(a.id)
+    if (known) {
       const chapters = chaptersOf(a)
       hint.innerHTML = `<b>${esc(a.name)}</b>` + (chapters ? ` <span class="map-tag">${esc(chapters)}</span>` : '')
-      travel.disabled = false
-      travel.classList.toggle('nudge', !travel.disabled)
     } else {
       hint.textContent = 'An undiscovered place — you will have to find it on foot.'
-      travel.disabled = true
-      travel.classList.toggle('nudge', !travel.disabled)
     }
+    travel.disabled = !known
+    // Travel is the thing to press whenever it can be pressed at all.
+    travel.classList.toggle('nudge', known)
   }
   const goTo = (id: string) => {
     sfx.select()

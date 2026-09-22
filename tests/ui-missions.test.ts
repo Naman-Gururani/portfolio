@@ -106,6 +106,23 @@ describe('the missions sheet', () => {
     expect(spy).toHaveBeenCalledWith({ id: 'gate' })
   })
 
+  // Nothing closes the sheet when the ticket is won — the puzzle is played out
+  // in the world and the sheet can still be sitting there behind it. A press
+  // that trusted the render would keep marching a player who now has a ticket
+  // back to the turnstiles they have already walked through, so the ticket is
+  // read again at press time.
+  it('re-reads the ticket when the button is pressed, not when the row was drawn', () => {
+    openMissions()
+    // Drawn ticketless: the row says so and the button redirects.
+    expect(go('coaster').textContent).toMatch(/gate|Bo|ticket/i)
+    uiState.flags = { ticket: 1 }
+    const spy = vi.fn()
+    const off = events.on('world:guide', spy)
+    go('coaster').click()
+    off()
+    expect(spy).toHaveBeenCalledWith({ id: 'coaster' })
+  })
+
   it('spells the status out for a screen reader', () => {
     openMissions()
     expect(row('gate').querySelector('.ms-status')?.textContent).toBe('Next')

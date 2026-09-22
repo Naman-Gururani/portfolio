@@ -124,10 +124,16 @@ describe('routeTiles at the real fairground gate', () => {
     // the honest answer here is null — the guide must hand a ticketless
     // player to Bo instead of trying to walk them through a wall.
     expect(path).toBeNull()
-    // Keep this direct check too, so that if the fair's layout ever opens
-    // some other seam in the ring, neither turnstile tile is ever part of
-    // a route while the ticket is unwon.
-    if (path) expect(path.some((p) => p.y === 51 && (p.x === 34 || p.x === 36))).toBe(false)
+    // And the reason is the turnstiles, not an accident of the fence. There is
+    // no route to inspect for turnstile tiles — there is no route — so the
+    // invariant is asserted where it actually lives: every tile of the gate
+    // opening is solid while the ticket is unwon, and none of them is once it
+    // is won. Move a turnstile and this fails; widen the opening and this fails.
+    const open = wallsFor(true)
+    for (const x of [34, 35, 36, 37]) {
+      expect(walls.has(`${x},51`)).toBe(true)
+      expect(open.has(`${x},51`)).toBe(false)
+    }
   })
 
   it('opens a route to the coaster once the ticket drops the turnstiles', () => {

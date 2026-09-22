@@ -310,6 +310,3 @@
   clip-path: polygon(14% 0, 26% 0, 26% 100%, 14% 100%, 14% 62%, 26% 62%, 26% 8%, 100% 8%, 100% 56%, 26% 56%);
   color: var(--accent-warm);
 }
-.hbtn-missions:hover .ic-flag {
-  color: var(--accent-warm);
-}

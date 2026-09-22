@@ -513,9 +513,10 @@ button {
 /* ---------- objective chip ----------
    Where the story goes next, and which way that is from here. The glyph points
    east at rest, which is where `atan2` puts 0°, so `--rot` (set twice a second
-   by ui/hud.ts) is the bearing itself. Tapping the chip opens the map, so it is
-   a real <button> — which means taking the type and the box back from the UA;
-   the border and the background stay the chip's own. */
+   by ui/hud.ts) is the bearing itself. Tapping the chip opens Missions — the
+   sheet that can walk you there — so it is a real <button>, which means taking
+   the type and the box back from the UA; the border and the background stay
+   the chip's own. */
 .hud-objective {
   cursor: pointer;
   margin: 0;
@@ -651,6 +652,30 @@ button {
 .prompt.show {
   opacity: 1;
   transform: translate(-50%, 0);
+}
+/* Touch controls on screen: the prompt is the only place the thing in reach is
+   named, and at its resting height it sits half under the JUMP button. Lift it
+   clear of the whole button row — the row's own offset (`.tbuttons` bottom)
+   plus the tallest button in it (`.tb-a`, 86px) plus a gap. Driven by a class
+   on the overlay root rather than a `~` rule, because `initPrompt` runs before
+   `initTouch` and the prompt is the *earlier* sibling. */
+#ui.touch-on .prompt {
+  bottom: calc(clamp(1rem, 3vw, 2rem) + 86px + 0.7rem);
+}
+/* And when the minimap is up it is in that corner too — it has already lifted
+   itself clear of the same buttons (panels.css, `#ui .touch:not(.hidden) ~
+   .minimap`), which puts it exactly where the prompt just moved to. Clearing
+   the buttons only to be cut in half by the map is no better than before, so
+   the prompt goes above the map as well: its lifted offset, plus its height.
+   `:has()` because the minimap is a *later* sibling and can be switched off. */
+#ui.touch-on:has(.minimap:not(.hidden)) .prompt {
+  bottom: calc(clamp(1rem, 3vw, 2rem) + 104px + 98px + 0.7rem);
+}
+@media (max-width: 680px) {
+  /* the smaller minimap panels.css draws at this width */
+  #ui.touch-on:has(.minimap:not(.hidden)) .prompt {
+    bottom: calc(clamp(1rem, 3vw, 2rem) + 104px + 74px + 0.7rem);
+  }
 }
 .pkey {
   padding: 0.3em 0.65em;
@@ -1006,20 +1031,58 @@ body.cutscene .touch {
 }
 :root.reduce-motion .nudge::after { animation: none; opacity: 0.95; transform: none; }
 
-/* Mid widths: the chip card must stop short of the Map / Journal / Menu / Sound
-   cluster on the right (about 370px with its labels) instead of running under
-   it; the chips wrap inside the card instead. */
+/* Mid widths: the chip card must stop short of the Missions / Map / Journal /
+   Menu / Sound cluster on the right instead of running under it; the chips
+   wrap inside the card instead.
+
+   The reserve is 470px, measured: the tools card with all five labels showing
+   is 462px wide and the HUD's own padding takes the rest. It used to say 370,
+   which was right before the Missions button joined the row and wrong after —
+   which is how the two card backgrounds came to overlap by ~55px at 800. The
+   `flex-wrap` is what makes the narrower cluster behave: without it the chips
+   shrink sideways into the name instead of dropping to a row of their own. */
 @media (max-width: 1000px) and (min-width: 721px) {
   .hud-cluster {
-    max-width: calc(100vw - 370px);
+    max-width: calc(100vw - 1.4rem - 470px);
+    flex-wrap: wrap;
   }
 }
 
-/* ---------- small screens ---------- */
+/* ---------- small screens ----------
+   Below 720 the two cards cannot share a row at all. The tools card is 462px
+   wide while its labels are on and 257px after they go at 640 (Missions keeps
+   its word — see below), and the cluster will not usefully shrink past about
+   250: 462 + 250 + the gutters is more than any phone has. Reserving the tools
+   width in `.hud-cluster`'s max-width — the shape the rule above uses — was
+   measured and rejected: at 360px it leaves the cluster 78px, and the name,
+   the XP track and the chips all spill out of their own card.
+
+   So the HUD wraps instead. The tools card takes the top row on its own (it is
+   the row with the buttons in it, so it goes first) and the cluster gets the
+   next one to itself. That is what stops the two card backgrounds overlapping
+   on a phone, and what lifts the level badge out from under the tools card,
+   where it used to disappear below 369px. */
 @media (max-width: 720px) {
+  .hud {
+    flex-wrap: wrap;
+  }
+  .hud-right {
+    order: -1;
+    flex: 1 1 100%;
+  }
+  .hud-left {
+    flex: 1 1 100%;
+  }
   .hud-cluster {
     max-width: calc(100vw - 1.4rem);
     flex-wrap: wrap;
+  }
+  /* …with one thing still to dodge: the touch overlay parks its own round menu
+     button just under the tools card (`.tb-menu`, 44px at right: 1rem), and the
+     cluster now reaches right across the window. It stops short of that button
+     rather than sliding under it. */
+  #ui.touch-on .hud-cluster {
+    max-width: calc(100vw - 1.4rem - 4.2rem);
   }
   .hud-id {
     flex-basis: 96px;
@@ -1033,6 +1096,14 @@ body.cutscene .touch {
   .hbtn span,
   .hud-region-chip {
     display: none;
+  }
+  /* …except this one. Missions is the button the welcome card and the
+     first-arrival hint both tell a lost player to tap by name, and five
+     identical icons with no word on any of them is exactly the screen they
+     were complaining about. The other four keep their tooltips; this one
+     keeps its label. */
+  .hbtn-missions span {
+    display: inline;
   }
   .hud-obj-text {
     max-width: 14ch;

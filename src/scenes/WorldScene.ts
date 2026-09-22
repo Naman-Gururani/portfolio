@@ -1571,14 +1571,28 @@ export class WorldScene extends Phaser.Scene {
     // the only player who has already been shown round it.
     const gate = BLUEPRINT.attractions.find((a) => a.id === 'gate')
     if (gate) this.discoverAttraction(gate)
-    events.emit('ui:hint', { text: 'WASD / arrows to move · Space to hop · E to talk' })
-    // A touch player has no keyboard to read that hint, so — once per save,
-    // now that Bo's greeting is out of the way — it is replaced with the one
-    // line that matters to them: the Missions sheet can walk you anywhere.
-    this.state.guideHintOnce(touchLayout())
+    const touch = touchLayout()
+    // The keyboard legend, for the players who have a keyboard. On a phone it
+    // names three keys that are not there and — worse — takes the one band of
+    // screen the touch hint below needs.
+    if (!touch) events.emit('ui:hint', { text: 'WASD / arrows to move · Space to hop · E to talk' })
     events.emit('ui:banner', { title: 'The Gate', sub: "Naman's World Fair" })
     this.state.save.tutorialDone = true
     this.state.dirty = true
+    // A touch player has no keyboard to read that legend, so — once per save —
+    // they get the one line that matters to them instead: the Missions sheet
+    // can walk you anywhere. It waits, because this instant is the busiest of
+    // the whole game: the badge toast, its XP, the discovery and the banner all
+    // land here, and a hint fired now would spend most of its four seconds
+    // underneath them. `running` is the far end of the wait — quitting to the
+    // title leaves no save to write the once-per-save flag to — and the timer
+    // is taken off the clock with the scene either way.
+    if (touch) {
+      const hint = this.time.delayedCall(4500, () => {
+        if (this.running) this.state.guideHintOnce(true)
+      })
+      this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => hint.remove())
+    }
   }
 
   private setFireworks(x: number, y: number) {
@@ -1784,12 +1798,16 @@ export class WorldScene extends Phaser.Scene {
    */
   private stopGuide(): void {
     const g = this.guide
+    // Nothing was being walked to. Every modal open calls through here, so
+    // without this the overlay would be told the walk ended several times a
+    // minute for walks that never started.
+    if (!g) return
     this.guide = null
-    if (g?.arrow) {
+    if (g.arrow) {
       this.tweens.killTweensOf(g.arrow)
       g.arrow.destroy()
     }
-    for (const d of g?.dots ?? []) {
+    for (const d of g.dots ?? []) {
       this.tweens.killTweensOf(d)
       d.destroy()
     }

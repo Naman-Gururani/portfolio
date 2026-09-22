@@ -63,13 +63,48 @@ describe('touch buttons', () => {
   it('takes the verb and the prompt of whatever is in range', () => {
     events.emit('ui:prompt', { text: 'Career Coaster', key: 'E', verb: 'RIDE' })
     expect(a().textContent).toContain('RIDE')
-    expect(a().getAttribute('aria-label')).toBe('Career Coaster')
+    // The face has room for the verb; the label has room for the sentence, and
+    // a reader has nothing else to go on.
+    expect(a().getAttribute('aria-label')).toBe('Ride the Career Coaster')
     expect(a().classList.contains('idle')).toBe(false)
     expect(a().classList.contains('nudge')).toBe(true)
+  })
+
+  it('does not say the verb twice when the prompt is already a sentence', () => {
+    events.emit('ui:prompt', { text: 'Talk to Bo' })
+    expect(a().getAttribute('aria-label')).toBe('Talk to Bo')
+  })
+
+  it('names the wrench swing when nothing is in reach', () => {
+    events.emit('ui:prompt', { text: 'Career Coaster', verb: 'RIDE' })
+    events.emit('ui:prompt', { text: null })
+    expect(a().getAttribute('aria-label')).toBe('Swing the wrench')
   })
 
   it('falls back to a verb when the event carries none', () => {
     events.emit('ui:prompt', { text: 'Talk to Bo' })
     expect(a().textContent).toContain('TALK')
+  })
+
+  // The interact prompt is the only place the thing in reach is named, and at
+  // its resting height it sits half under the JUMP button. It cannot see the
+  // button row — `initPrompt` runs first, so the prompt is the earlier sibling
+  // and no `~` rule reaches it — so the overlay root carries the fact for it.
+  it('flags the overlay root while the button row is on screen', () => {
+    const setTouch = (window as unknown as { __setTouch: (v: 'auto' | 'on' | 'off') => void }).__setTouch
+    setTouch('on')
+    expect(root().classList.contains('touch-on')).toBe(true)
+    setTouch('off')
+    expect(root().classList.contains('touch-on')).toBe(false)
+  })
+
+  it('drops the flag at the title, where the buttons are hidden too', () => {
+    const setTouch = (window as unknown as { __setTouch: (v: 'auto' | 'on' | 'off') => void }).__setTouch
+    setTouch('on')
+    document.body.classList.add('at-title')
+    setTouch('on')
+    expect(root().querySelector('.touch')?.classList.contains('hidden')).toBe(true)
+    expect(root().classList.contains('touch-on')).toBe(false)
+    document.body.classList.remove('at-title')
   })
 })

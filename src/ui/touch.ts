@@ -1,5 +1,5 @@
 import { events, touchInput } from '../core/events'
-import { IDLE_VERB, verbFor } from '../systems/verbs'
+import { actionLabel, IDLE_LABEL, IDLE_VERB, verbFor } from '../systems/verbs'
 
 export function initTouch(root: HTMLElement): void {
   const wrap = document.createElement('div')
@@ -8,7 +8,7 @@ export function initTouch(root: HTMLElement): void {
     <div class="joy"><div class="joy-base"><div class="joy-thumb"></div></div></div>
     <div class="tbuttons">
       <button class="tb tb-b" aria-label="Jump"><span class="tb-icon" aria-hidden="true">⤒</span><span class="tb-verb">JUMP</span></button>
-      <button class="tb tb-a idle" aria-label="Swing the wrench"><span class="tb-verb">SWING</span></button>
+      <button class="tb tb-a idle" aria-label="${IDLE_LABEL}"><span class="tb-verb">${IDLE_VERB}</span></button>
     </div>
     <button class="tb tb-menu" aria-label="Menu">≡</button>`
   root.appendChild(wrap)
@@ -78,8 +78,12 @@ export function initTouch(root: HTMLElement): void {
   const aVerb = a.querySelector('.tb-verb') as HTMLElement
   events.on('ui:prompt', ({ text, verb }) => {
     const idle = !text
-    aVerb.textContent = idle ? IDLE_VERB : verb ?? verbFor({ prompt: text })
-    a.setAttribute('aria-label', idle ? 'Swing the wrench' : text)
+    const word = idle ? IDLE_VERB : verb ?? verbFor({ prompt: text })
+    aVerb.textContent = word
+    // The label carries the verb too. The face has room for one word and the
+    // place is on screen anyway; a reader has neither, so it hears the whole
+    // sentence — "Ride the Career Coaster", not "Career Coaster".
+    a.setAttribute('aria-label', idle ? IDLE_LABEL : actionLabel(text, word))
     a.classList.toggle('idle', idle)
     a.classList.toggle('nudge', !idle)
   })
@@ -88,7 +92,13 @@ export function initTouch(root: HTMLElement): void {
   let forced: 'auto' | 'on' | 'off' = 'auto'
   const apply = () => {
     const on = forced === 'on' || (forced === 'auto' && wantTouch())
-    wrap.classList.toggle('hidden', !on || document.body.classList.contains('at-title'))
+    const shown = on && !document.body.classList.contains('at-title')
+    wrap.classList.toggle('hidden', !shown)
+    // The interact prompt has to clear the button row, and it cannot see the
+    // row from where it sits: `initPrompt` runs *before* `initTouch` (see
+    // ui/index.ts), so the prompt is the earlier sibling and no `~` rule can
+    // reach it. The overlay root carries the fact instead.
+    root.classList.toggle('touch-on', shown)
   }
   apply()
   window.addEventListener('resize', apply)
