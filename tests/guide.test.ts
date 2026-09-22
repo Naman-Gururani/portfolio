@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { REACH_PX, routeTiles, stepAlong, waypoints } from '../src/systems/guide'
 import { TILE, WORLD_TH, WORLD_TW } from '../src/config'
 import { makeGrid, T } from '../src/world/terrain'
-import { BLUEPRINT, attractionSolids, structureSolids } from '../src/world/blueprint'
+import { BLUEPRINT, attractionSolids, boundarySolids, structureSolids } from '../src/world/blueprint'
 
 /** A flat lawn; the walls come from the `blocked` predicate each test passes. */
 const lawn = (w: number, h: number) => makeGrid(w, h, T.GRASS)
@@ -73,17 +73,59 @@ function fill(walls: Set<string>, rects: { x: number; y: number; w: number; h: n
   for (const r of rects) for (let x = r.x; x < r.x + r.w; x++) for (let y = r.y; y < r.y + r.h; y++) walls.add(`${x},${y}`)
 }
 
-it('will not route through the turnstiles while they stand', () => {
-  // `structureSolids` takes a flag *predicate*; with nothing set, the gated
-  // turnstiles are still solid — which is exactly the state a player is in
-  // before they win the ticket.
+/**
+ * Every solid a guided walk actually contends with between the gate and the
+ * coaster: the perimeter fence, every attraction footprint, and the gated
+ * structures (the turnstiles, unless `ticketWon`).
+ *
+ * `boundarySolids` — the hard perimeter ring — has to be in this set. Leave
+ * it out, as an earlier version of this test did, and the wall set has a
+ * fence-shaped hole everywhere except the two turnstiles: A* is then free to
+ * walk around the *outside* of the whole park and back in anywhere along the
+ * unwalled ring, so a test that only checks "never stands on a turnstile
+ * tile" passes for the wrong reason — it never actually tried to get through
+ * the gate.
+ */
+function wallsFor(ticketWon: boolean): Set<string> {
   const walls = new Set<string>()
-  fill(walls, structureSolids(BLUEPRINT, () => false))
+  fill(walls, boundarySolids(BLUEPRINT))
+  fill(walls, structureSolids(BLUEPRINT, (f) => (ticketWon ? f === 'ticket' : false)))
   for (const a of BLUEPRINT.attractions) fill(walls, attractionSolids(a))
-  const grid = makeGrid(WORLD_TW, WORLD_TH, T.PLAZA)
-  const gate = BLUEPRINT.attractions.find((a) => a.id === 'gate')!
-  const path = routeTiles(grid, gate.door, { x: 50, y: 16 }, (x, y) => walls.has(`${x},${y}`))
-  // The turnstile halves stand at (34,51) and (36,51). Whether A* finds a way
-  // round them or none at all, it must never walk through one.
-  if (path) expect(path.some((p) => p.y === 51 && (p.x === 34 || p.x === 36))).toBe(false)
+  return walls
+}
+
+describe('routeTiles at the real fairground gate', () => {
+  it('finds no route in while the turnstiles and the fence both stand', () => {
+    const grid = makeGrid(WORLD_TW, WORLD_TH, T.PLAZA)
+    const gate = BLUEPRINT.attractions.find((a) => a.id === 'gate')!
+    const walls = wallsFor(false)
+    const path = routeTiles(grid, gate.door, { x: 50, y: 16 }, (x, y) => walls.has(`${x},${y}`))
+    // The gate opening is exactly 4 tiles wide, x34..37 at y51, and the two
+    // turnstile halves — `turnstile` at tx34 (solid x34-35) and tx36 (solid
+    // x36-37) — cover all four of those tiles between them. With the
+    // perimeter fence solid everywhere else, a ticketless player has no
+    // tile-legal way from the gate door into the park at all: this is not a
+    // routing gap, it is the same rule `data/missions.ts` enforces (every
+    // mission but 'gate' reads 'locked' until the `ticket` flag is set), so
+    // the honest answer here is null — the guide must hand a ticketless
+    // player to Bo instead of trying to walk them through a wall.
+    expect(path).toBeNull()
+    // Keep this direct check too, so that if the fair's layout ever opens
+    // some other seam in the ring, neither turnstile tile is ever part of
+    // a route while the ticket is unwon.
+    if (path) expect(path.some((p) => p.y === 51 && (p.x === 34 || p.x === 36))).toBe(false)
+  })
+
+  it('opens a route to the coaster once the ticket drops the turnstiles', () => {
+    const grid = makeGrid(WORLD_TW, WORLD_TH, T.PLAZA)
+    const gate = BLUEPRINT.attractions.find((a) => a.id === 'gate')!
+    const walls = wallsFor(true)
+    const path = routeTiles(grid, gate.door, { x: 50, y: 16 }, (x, y) => walls.has(`${x},${y}`))
+    // Same fence, same footprints — only the turnstiles' `gate: 'ticket'`
+    // now reads as unset-and-passed, so `structureSolids` drops them from
+    // the wall set and the same gate opening is the way in. This is the
+    // pair that proves the router respects the gate rather than merely
+    // ignoring it: shut, no route; open, a route.
+    expect(path).not.toBeNull()
+  })
 })
