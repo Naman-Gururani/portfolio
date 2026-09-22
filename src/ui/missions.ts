@@ -50,25 +50,13 @@ function nameOf(id: string): string {
   return BLUEPRINT.attractions.find((a) => a.id === id)?.name ?? id
 }
 
-/**
- * Everything `missionStatus` needs, read straight off the live UI snapshot.
- *
- * With one correction. The gate counts as done when the About chapter is
- * unlocked — but About is *given*, not won: the arrival cutscene unlocks it
- * before Bo has asked his question (`WorldScene.unlockFacet('about', false)`),
- * because the first card anybody sees must not be a locked one. Read literally,
- * that opens the sheet on a brand-new save with the Ticket Booth already ticked
- * off and no row marked Next at all — which is the exact confusion this screen
- * exists to end. The ticket is what the gate really hands over, so until it is
- * won the chapter it gave away early does not count towards it.
- */
+/** Everything `missionStatus` needs, read straight off the live UI snapshot. */
 function view(): MissionView {
-  const ticket = !!uiState.flags.ticket
   return {
-    unlocked: ticket ? uiState.unlocked : uiState.unlocked.filter((z) => z !== 'about'),
+    unlocked: uiState.unlocked,
     questDone: (id) => !!uiState.quests?.isDone(id),
     discovered: uiState.stats.discoveries,
-    ticket,
+    ticket: !!uiState.flags.ticket,
   }
 }
 

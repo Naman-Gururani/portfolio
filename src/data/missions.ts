@@ -43,6 +43,14 @@ export type MissionView = {
 export type MissionStatus = 'done' | 'next' | 'open' | 'locked'
 
 function isDone(m: Mission, v: MissionView): boolean {
+  // The gate's mission is *get your ticket*, and reading the About card is not
+  // the same thing. The arrival cutscene hands About over before Bo has asked
+  // his question (`WorldScene` calls `unlockFacet('about', false)` as the walk
+  // ends, so the first card anybody ever sees is not a locked one) — which
+  // would otherwise tick the gate off on a brand-new save and leave nothing at
+  // all marked `next`. That is the state every player is in a minute after
+  // arriving, so it is the one the rule has to get right.
+  if (m.id === 'gate' && !v.ticket) return false
   if (m.done.kind === 'zones') return m.done.zones.every((z) => v.unlocked.includes(z))
   if (m.done.kind === 'quest') return v.questDone(m.done.quest)
   return v.discovered.includes(m.id)

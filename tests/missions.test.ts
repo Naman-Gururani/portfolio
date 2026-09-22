@@ -32,6 +32,20 @@ describe('missions', () => {
     expect(missionStatus(coaster, view())).toBe('open')
   })
 
+  // The state every player is in a minute after arriving: the cutscene has
+  // handed the About card over (`WorldScene` unlocks it so the first card
+  // anybody sees is not a locked one) and Bo has not been beaten yet. Read off
+  // the zones alone the gate would already be ticked, and nothing at all would
+  // be `next` — the exact "what do I do now?" this whole spine exists to answer.
+  it('does not call the gate done until the ticket itself is won', () => {
+    const gate = MISSIONS.find((m) => m.id === 'gate')!
+    const fresh = view({ unlocked: ['about'], ticket: false })
+    expect(missionStatus(gate, fresh)).toBe('next')
+    expect(MISSIONS.filter((m) => missionStatus(m, fresh) === 'next').map((m) => m.id)).toEqual(['gate'])
+    // And the moment it is won, the About card it handed over counts.
+    expect(missionStatus(gate, view({ unlocked: ['about'] }))).toBe('done')
+  })
+
   it('marks a chapter done once its zones are unlocked', () => {
     const forge = MISSIONS.find((m) => m.id === 'forge')!
     expect(missionStatus(forge, view({ unlocked: ['skills'] }))).toBe('done')
