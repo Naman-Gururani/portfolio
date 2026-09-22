@@ -1088,7 +1088,7 @@ export class WorldScene extends Phaser.Scene {
     if (!this.locked) this.openPanel('pause')
   }
 
-  private onPanel(id: 'map' | 'journal') {
+  private onPanel(id: 'map' | 'journal' | 'missions') {
     if (this.mode !== 'play' || this.locked || this.inCutscene) return
     this.openPanel(id)
   }

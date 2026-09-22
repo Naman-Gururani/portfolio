@@ -38,7 +38,15 @@ export type Events = {
     py?: number
   }
   'world:travel': { id: string }
-  'world:action': { action: 'interact' | 'jump' | 'menu' | 'map' | 'journal' }
+  'world:action': { action: 'interact' | 'jump' | 'menu' | 'map' | 'journal' | 'missions' }
+  /**
+   * The Missions sheet asks the world to walk the player to an attraction. The
+   * sheet only ever names a place it knows there is a road to — before the
+   * ticket it redirects to the gate itself — and the world owns the route.
+   */
+  'world:guide': { id: string }
+  /** The world reports that it is walking somewhere (`to` null = it stopped). */
+  'guide:state': { to: string | null }
   'world:discovered': { id: string; first: boolean }
   /** a résumé chapter (zone id) was unlocked; `announce` false = the game shows the card itself */
   'facet:unlocked': { id: string; first: boolean; announce: boolean }

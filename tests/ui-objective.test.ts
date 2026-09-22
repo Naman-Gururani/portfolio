@@ -137,7 +137,7 @@ describe('HUD objective chip', () => {
     expect(chip().getAttribute('type')).toBe('button')
   })
 
-  it('asks the scene for the map, the same way the Map button does', () => {
+  it('asks the scene for the missions sheet, the same way the tool buttons do', () => {
     uiState.objective = at(10, 10)
     initHud(document.getElementById('ui')!)
     const seen: unknown[] = []
@@ -146,9 +146,12 @@ describe('HUD objective chip', () => {
     chip().click()
     offAction()
     offPanel()
-    // `ui:panel` would open the map over a cutscene or a locked world; the
-    // scene's own handler is what refuses to.
-    expect(seen).toEqual([{ action: 'map' }])
+    // It used to open the map. The chip names one place, and somebody pressing
+    // it is usually asking the bigger question — so it opens the sheet that
+    // answers "what do I do here?", which names this place too and walks you to
+    // it. `ui:panel` would open over a cutscene or a locked world; the scene's
+    // own handler is what refuses to.
+    expect(seen).toEqual([{ action: 'missions' }])
   })
 })
 

@@ -12,6 +12,7 @@ import { initLoading } from './loading'
 import { initMinigames } from '../systems/Minigame'
 import { initMap, initMinimap } from './map'
 import { initMinigameRenderers } from './minigames'
+import { initMissions } from './missions'
 import { initPanels } from './panels'
 import { initPause } from './pause'
 import { initPrizes } from './prizes'
@@ -47,6 +48,7 @@ export function initUI(): void {
   initPause()
   initRidecard()
   initForgeboard()
+  initMissions()
   initPrizes()
   initMinigames()
   initMinigameRenderers()

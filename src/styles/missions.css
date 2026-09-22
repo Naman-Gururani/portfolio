@@ -1,0 +1,315 @@
+/* ============================================================
+   MISSIONS — the sheet that says what to do and where.
+
+   Built thumb-first. Every row is a full-width card with the
+   status spelled out beside its name, two plain lines under it,
+   and one button. Under 480px the button goes full width and the
+   card loses nothing: this is the screen somebody opens when they
+   are lost, usually on a phone, usually one-handed.
+
+   Colour is never the message. `.ms-status` always carries the
+   word — Done / Next / Open / Ticket first — and the rail down the
+   left edge only agrees with it.
+   ============================================================ */
+
+.missions {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.ms-body {
+  padding: 0 var(--pad);
+  overflow-y: auto;
+}
+
+/* ---------- the standing lines at the top ---------- */
+
+.ms-count {
+  margin: 0.9rem 0 0;
+  font-family: var(--font-accent);
+  font-size: 1.05rem;
+  color: var(--ink-dim);
+}
+.ms-count b {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+.ms-note,
+.ms-howto {
+  margin: 0.55rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+.ms-note {
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+.ms-note b,
+.ms-howto b {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ---------- a section: the story, then the side stalls ---------- */
+
+.ms-sec {
+  margin-top: 1.4rem;
+}
+.ms-sec-title {
+  margin: 0;
+  font-family: var(--font-accent);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.ms-sec-blurb {
+  margin: 0.2rem 0 0.7rem;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--ink-mute);
+}
+.ms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---------- one stop ---------- */
+
+.ms-row {
+  --rail: var(--line-strong);
+  position: relative;
+  padding: 0.85rem 0.95rem 0.85rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.035);
+}
+/* The rail agrees with the word in the pill; it never carries the news alone. */
+.ms-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55rem;
+  bottom: 0.55rem;
+  width: 4px;
+  border-radius: 0 999px 999px 0;
+  background: var(--rail);
+}
+.ms-row.next {
+  --rail: var(--accent);
+  border-color: rgba(94, 234, 212, 0.34);
+  background: var(--accent-soft);
+}
+.ms-row.locked {
+  --rail: var(--accent-warm);
+}
+/* A side stall is Open and still behind a shut gate: the rail agrees with the
+   line in the row, not with the pill above it. */
+.ms-row.open.redirects {
+  --rail: var(--accent-warm);
+}
+.ms-row.done {
+  --rail: var(--ink-mute);
+  opacity: 0.78;
+}
+
+.ms-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.6rem;
+}
+.ms-name {
+  margin: 0;
+  font-family: var(--font-accent);
+  font-size: 1.12rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.ms-status {
+  flex: none;
+  padding: 0.22rem 0.6rem;
+  border: 1px solid var(--rail);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.ms-row.next .ms-status {
+  background: rgba(94, 234, 212, 0.18);
+}
+.ms-row.locked .ms-status {
+  background: var(--warm-soft);
+}
+
+.ms-does {
+  margin: 0.45rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.ms-gives {
+  margin: 0.3rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+.ms-k {
+  margin-right: 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+/* Said in full once at the top of the sheet, and only while it is true. */
+.ms-gate {
+  margin: 0.55rem 0 0;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm);
+  background: var(--warm-soft);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.ms-gate b {
+  color: var(--accent-warm);
+  font-weight: 600;
+}
+/* And kept to a plain line on the rows themselves: seven boxed paragraphs
+   saying the same thing is the wall of text this sheet exists to replace. */
+.ms-need {
+  margin: 0.4rem 0 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  font-weight: 500;
+  color: var(--accent-warm);
+}
+.ms-go {
+  margin-top: 0.7rem;
+  min-height: 44px;
+}
+.ms-row.next .ms-go {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--on-accent);
+}
+.ms-row.next .ms-go:hover {
+  background: var(--accent-bright);
+}
+
+/* ---------- phones: full-width rows, full-width button ---------- */
+
+@media (max-width: 480px) {
+  .ms-body {
+    padding: 0 16px;
+  }
+  .ms-go {
+    display: block;
+    width: 100%;
+  }
+  .ms-head {
+    /* Name first, status under it: side by side at this width the pill would
+       squeeze a long name like "Career Coaster" down to two ragged lines. */
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .ms-count b {
+    font-size: 1.35rem;
+  }
+}
+
+/* ---------- the guide bar ---------- */
+
+/* Shown while the world is walking you somewhere. Same glass as `.prompt`,
+   parked at the top so it never sits under a thumb or over the joystick. */
+.ms-bar {
+  position: fixed;
+  left: 50%;
+  top: calc(env(safe-area-inset-top, 0px) + 4.6rem);
+  z-index: 40;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: min(92vw, 30rem);
+  padding: 0.5rem 0.95rem;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.ms-bar[hidden] {
+  display: none;
+}
+.ms-bar-arrow {
+  font-style: normal;
+  line-height: 1;
+  color: var(--accent);
+  animation: msbarpulse 1.4s var(--ease) infinite;
+}
+.ms-bar-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@keyframes msbarpulse {
+  50% {
+    transform: translateX(3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ms-bar-arrow {
+    animation: none;
+  }
+}
+:root.reduce-motion .ms-bar-arrow {
+  animation: none;
+}
+/* On a phone the HUD's chip cluster wraps to three rows and reaches most of the
+   way down the left side, so the bar drops below it rather than sitting on top
+   of the clock — and it is allowed two lines instead of an ellipsis, because a
+   destination trimmed to "Ticket Bo..." is the opposite of guidance. */
+@media (max-width: 720px) {
+  .ms-bar {
+    top: calc(env(safe-area-inset-top, 0px) + 12rem);
+    left: 1rem;
+    right: 1rem;
+    max-width: none;
+    transform: none;
+    justify-content: center;
+  }
+  .ms-bar-text {
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+/* ---------- the HUD's Missions button ---------- */
+
+/* A pennant, drawn the way the other `.ic` glyphs are drawn. Doubled class so
+   it beats the base `.ic` clip-path on specificity rather than on the order the
+   stylesheets happen to be imported in. Warm, not accent: it is the odd button
+   out in that cluster, the one to press when you do not know what to press. */
+.ic.ic-flag {
+  clip-path: polygon(14% 0, 26% 0, 26% 100%, 14% 100%, 14% 62%, 26% 62%, 26% 8%, 100% 8%, 100% 56%, 26% 56%);
+  color: var(--accent-warm);
+}
+.hbtn-missions:hover .ic-flag {
+  color: var(--accent-warm);
+}

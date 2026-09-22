@@ -43,6 +43,7 @@ vi.mock('phaser', () => {
 vi.mock('../src/art/atlas', () => ({ frameDataURL: () => '' }))
 
 import { sfx } from '../src/audio/sfx'
+import { events } from '../src/core/events'
 import { defaultSettings, loadSettings } from '../src/core/save'
 import { initHud } from '../src/ui/hud'
 import { uiState } from '../src/ui/state'
@@ -62,12 +63,15 @@ describe('HUD mute button', () => {
     vi.restoreAllMocks()
   })
 
-  it('is the fourth tool button, right after Menu, off by default', () => {
+  it('is the last tool button, right after Menu, off by default', () => {
     initHud(document.getElementById('ui')!)
     const tools = document.querySelectorAll('.hud-tools .hbtn')
-    expect(tools).toHaveLength(4)
-    expect(tools[3]).toBe(muteBtn())
-    expect(tools[2].getAttribute('data-act')).toBe('menu')
+    // Missions · Map · Journal · Menu · Sound — Missions leads the cluster
+    // because "what do I do here?" is the question people arrive with.
+    expect(tools).toHaveLength(5)
+    expect([...tools].map((t) => t.getAttribute('data-act'))).toEqual(['missions', 'map', 'journal', 'menu', 'mute'])
+    expect(tools[4]).toBe(muteBtn())
+    expect(tools[3].getAttribute('data-act')).toBe('menu')
     expect(muteBtn().getAttribute('aria-pressed')).toBe('false')
     expect(muteBtn().title).toBe('Mute sound')
     expect(glyph()).toBe('🔊')
@@ -159,5 +163,64 @@ describe('HUD buttons hand focus back to the game', () => {
     keyboardClick(b)
     expect(b.getAttribute('aria-pressed')).toBe('true')
     expect(document.activeElement).toBe(b)
+  })
+})
+
+// "People are finding it hard to navigate around the game." The Missions button
+// leads the tool cluster, and the objective chip — the one thing on the HUD that
+// already says where to go — opens the same sheet rather than a map to read.
+describe('HUD Missions button', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '<div id="game-root"></div><div id="ui" tabindex="-1"></div>'
+    localStorage.clear()
+    uiState.settings = defaultSettings()
+    uiState.objective = { step: 'gate', text: 'Ticket Booth', landmark: 'gate', tx: 35, ty: 53 }
+    vi.useFakeTimers()
+    initHud(document.getElementById('ui')!)
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    uiState.objective = null
+  })
+
+  const missions = () => document.querySelector<HTMLButtonElement>('[data-act="missions"]')!
+  const chip = () => document.querySelector<HTMLButtonElement>('.hud-objective')!
+
+  it('asks the scene for the missions panel, like every tool beside it', () => {
+    const spy = vi.fn()
+    const off = events.on('world:action', spy)
+    missions().click()
+    off()
+    expect(spy).toHaveBeenCalledWith({ action: 'missions' })
+  })
+
+  it('sends the objective chip to the sheet instead of the map', () => {
+    const spy = vi.fn()
+    const off = events.on('world:action', spy)
+    chip().click()
+    off()
+    expect(spy).toHaveBeenCalledWith({ action: 'missions' })
+  })
+
+  it('blinks when the story moves on, and stops on its own', () => {
+    expect(missions().classList.contains('nudge')).toBe(false)
+    events.emit('story:changed', { next: 'coaster' })
+    expect(missions().classList.contains('nudge')).toBe(true)
+    vi.advanceTimersByTime(3600)
+    expect(missions().classList.contains('nudge')).toBe(false)
+  })
+
+  it('stops blinking the moment the sheet is opened', () => {
+    events.emit('story:changed', { next: 'coaster' })
+    events.emit('ui:panel', { id: 'missions' })
+    expect(missions().classList.contains('nudge')).toBe(false)
+  })
+
+  it('drops focus after a pointer click, like the rest of the bar', () => {
+    const b = missions()
+    b.focus()
+    b.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))
+    expect(document.activeElement).not.toBe(b)
   })
 })

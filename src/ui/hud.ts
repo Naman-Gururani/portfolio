@@ -10,10 +10,19 @@ import { uiState } from './state'
 /** How often the compass re-reads the player position (twice a second). */
 const OBJECTIVE_MS = 500
 let objectiveTimer = 0
+/**
+ * Three turns of the nudge ring (1.15s a cycle) and then it stops. Long enough
+ * to be seen by somebody who was looking elsewhere, short enough that it never
+ * becomes the wallpaper.
+ */
+const NUDGE_MS = 3500
+let nudgeTimer = 0
 /** Dropped before a second `initHud` wires a second chip to the same event. */
 let offStory: (() => void) | null = null
 /** Dropped before a second `initHud` wires a second listener to the same event. */
 let offMute: (() => void) | null = null
+/** Dropped before a second `initHud` wires a second listener to the same event. */
+let offPanel: (() => void) | null = null
 
 export function initHud(root: HTMLElement): void {
   const hud = document.createElement('header')
@@ -31,12 +40,13 @@ export function initHud(root: HTMLElement): void {
           <span class="hud-chip hud-coins" title="Coins"><i class="ic ic-coin"></i><b>0</b></span>
           <span class="hud-chip hud-clock" title="Time of day"><i class="ic ic-sun"></i><b class="hud-time">07:00</b></span>
           <span class="hud-chip hud-region-chip" hidden><span class="hud-region"></span></span>
-          <button type="button" class="hud-chip hud-objective" title="Where the story goes next — open the map" hidden><i class="hud-compass" aria-hidden="true">➤</i><span class="hud-obj-text"></span></button>
+          <button type="button" class="hud-chip hud-objective" title="Where the story goes next — open Missions" hidden><i class="hud-compass" aria-hidden="true">➤</i><span class="hud-obj-text"></span></button>
         </div>
       </div>
     </div>
     <div class="hud-right">
       <div class="card hud-tools">
+        <button class="hbtn hbtn-missions" data-act="missions" title="Missions — what to do and where"><i class="ic ic-flag"></i><span>Missions</span></button>
         <button class="hbtn" data-act="map" title="Map (M)"><i class="ic ic-map"></i><span>Map</span></button>
         <button class="hbtn" data-act="journal" title="Journal (J)"><i class="ic ic-journal"></i><span>Journal</span></button>
         <button class="hbtn" data-act="menu" title="Menu (Esc)"><i class="ic ic-menu"></i><span>Menu</span></button>
@@ -62,6 +72,7 @@ export function initHud(root: HTMLElement): void {
   const compass = q('.hud-compass')
   const muteBtn = q<HTMLButtonElement>('[data-act="mute"]')
   const muteIcon = q('.ic-sound')
+  const missionsBtn = q<HTMLButtonElement>('[data-act="missions"]')
 
   /**
    * The story's next stop, and which way it lies. The arrow glyph points east
@@ -111,11 +122,14 @@ export function initHud(root: HTMLElement): void {
     const pressed = t.closest<HTMLElement>('button')
     const byPointer = e.detail > 0 || !!(e as PointerEvent).pointerType
     if (pressed && byPointer) pressed.blur()
-    // Through the scene, like the Map button beside it: `ui:panel` would open
-    // the map over a cutscene or a locked world, which nothing else in the HUD
-    // is allowed to do.
+    // The chip names one place; the sheet explains every place, that one
+    // included — so somebody who taps "Next: …" because they are lost lands on
+    // the screen that answers being lost, not on a map they still have to read.
+    // It goes through the scene, like the tool buttons beside it: `ui:panel`
+    // would open over a cutscene or a locked world, which nothing in the HUD is
+    // allowed to do.
     if (t.closest('.hud-objective')) {
-      events.emit('world:action', { action: 'map' })
+      events.emit('world:action', { action: 'missions' })
       return
     }
     const b = t.closest<HTMLButtonElement>('.hbtn')
@@ -129,7 +143,7 @@ export function initHud(root: HTMLElement): void {
       refreshMute()
       return
     }
-    events.emit('world:action', { action: b.dataset.act as 'map' | 'journal' | 'menu' })
+    events.emit('world:action', { action: b.dataset.act as 'map' | 'journal' | 'menu' | 'missions' })
   })
 
   events.on('ui:hud', ({ visible }) => {
@@ -154,9 +168,24 @@ export function initHud(root: HTMLElement): void {
   // The player moves every frame and the objective changes twice an hour: a
   // slow poll costs nothing and keeps the arrow honest without a per-frame hook.
   // Poll and listener are both replaced, never stacked, if the HUD remounts.
+  // The story moving on is the one moment a player is most likely to be asking
+  // "so what now?" — ring the button that answers it, three turns and no more.
+  // The ring also comes off the moment the sheet is opened: it has been read.
+  const dropNudge = () => {
+    window.clearTimeout(nudgeTimer)
+    nudgeTimer = 0
+    missionsBtn.classList.remove('nudge')
+  }
   refreshObjective()
   offStory?.()
-  offStory = events.on('story:changed', () => refreshObjective())
+  offStory = events.on('story:changed', () => {
+    refreshObjective()
+    dropNudge()
+    missionsBtn.classList.add('nudge')
+    nudgeTimer = window.setTimeout(dropNudge, NUDGE_MS)
+  })
+  offPanel?.()
+  offPanel = events.on('ui:panel', ({ id }) => id === 'missions' && dropNudge())
   window.clearInterval(objectiveTimer)
   objectiveTimer = window.setInterval(refreshObjective, OBJECTIVE_MS)
 

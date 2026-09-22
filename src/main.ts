@@ -9,6 +9,7 @@ import '@fontsource/pixelify-sans/600.css'
 import './styles/ui.css'
 import './styles/panels.css'
 import './styles/ride.css'
+import './styles/missions.css'
 import './styles/games.css'
 
 import Phaser from 'phaser'
