@@ -1,11 +1,14 @@
 // Tracks interactables near the player and shows the contextual prompt.
 import { events } from '../core/events'
+import { verbFor } from './verbs'
 
 export interface Interactable {
   x: number
   y: number
   radius: number
   prompt: string
+  /** One word for the action button. Falls back to `verbFor` when absent. */
+  verb?: string
   key?: string
   enabled?: () => boolean
   onInteract: () => void | Promise<void>
@@ -57,7 +60,7 @@ export class InteractSystem {
     if (prompt === this.lastPrompt && i === this.current) return
     this.lastPrompt = prompt
     this.current = i
-    events.emit('ui:prompt', i ? { text: i.prompt, key: i.key ?? 'E' } : { text: null })
+    events.emit('ui:prompt', i ? { text: i.prompt, key: i.key ?? 'E', verb: verbFor({ verb: i.verb, prompt: i.prompt }) } : { text: null })
   }
 
   hide(): void {

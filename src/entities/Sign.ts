@@ -23,6 +23,7 @@ export class Sign {
       y: sprite.y,
       radius: 24,
       prompt: 'Read the sign',
+      verb: 'READ',
       onInteract: () => onRead(def.id),
       priority: 1,
     }

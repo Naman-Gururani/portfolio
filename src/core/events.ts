@@ -7,7 +7,7 @@ export type Events = {
   'load:progress': { pct: number; label: string }
   'ui:title': { hasSave: boolean }
   'ui:hud': { visible: boolean }
-  'ui:prompt': { text: string | null; key?: string }
+  'ui:prompt': { text: string | null; key?: string; verb?: string }
   'ui:banner': { title: string; sub?: string }
   'ui:toast': { icon?: string; title: string; sub?: string; kind?: ToastKind }
   'ui:dialogue': { tree: string; npc: string }

@@ -37,6 +37,7 @@ import { Ducks } from '../systems/Ducks'
 import { GameState } from '../systems/GameState'
 import { InteractSystem, type Interactable } from '../systems/Interact'
 import { minigames } from '../systems/Minigame'
+import { verbFor } from '../systems/verbs'
 import { Water } from '../systems/Water'
 import { Weather } from '../systems/Weather'
 import { Wind } from '../systems/Wind'
@@ -400,6 +401,7 @@ export class WorldScene extends Phaser.Scene {
         y: dy,
         radius: 26,
         prompt: a.name,
+        verb: verbFor({ interact: a.interact, prompt: a.name }),
         // One rung above the cast: a keeper who wanders onto the door tile must
         // not swallow the door (Ilse stood on the guestbook's step and E talked
         // to her instead of opening the book). Within a door's reach the door
@@ -513,7 +515,7 @@ export class WorldScene extends Phaser.Scene {
         // the board's own foot: the board's tile is solid, so a point on its
         // edge leaves only a half-tile band of standing positions that can reach
         // it and the prompt never appears. The doors do the same thing at r=26.
-        this.interact.add({ x, y: y + TILE / 2, radius: 28, prompt: 'Read the board', onInteract: () => this.openPanel('forgeboard') })
+        this.interact.add({ x, y: y + TILE / 2, radius: 28, prompt: 'Read the board', verb: 'READ', onInteract: () => this.openPanel('forgeboard') })
       }
     }
     // lost tickets & prize boxes
@@ -537,6 +539,7 @@ export class WorldScene extends Phaser.Scene {
       y: f.y * TILE + TILE / 2,
       radius: 28,
       prompt: 'Hook a duck',
+      verb: 'HOOK',
       onInteract: () => void this.hookADuck(),
       enabled: () => !!this.state && this.state.quests.isStarted('ducks'),
     })
@@ -550,6 +553,7 @@ export class WorldScene extends Phaser.Scene {
       y: (gap.y + 1) * TILE,
       radius: 34,
       prompt: 'Turnstile',
+      verb: 'PUSH',
       priority: 1,
       enabled: () => !!this.state && !this.state.flag('ticket'),
       onInteract: () => {
@@ -572,6 +576,7 @@ export class WorldScene extends Phaser.Scene {
         y: (booth.ty + booth.h - 1) * TILE,
         radius: 26,
         prompt: 'Fair lights',
+        verb: 'SWITCH',
         priority: 1,
         enabled: () => !!this.state && this.state.quests.isStarted('lights') && !this.state.quests.isDone('lights'),
         onInteract: () => this.throwLightSwitch(),
@@ -592,6 +597,7 @@ export class WorldScene extends Phaser.Scene {
       y,
       radius: 20,
       prompt: 'Take the balloon',
+      verb: 'TAKE',
       enabled: () => !!this.state && !this.state.flag(flag),
       onInteract: () => {
         if (!this.state || this.state.flag(flag)) return
@@ -642,6 +648,7 @@ export class WorldScene extends Phaser.Scene {
         },
         radius: 26,
         prompt: `Talk to ${def.name}`,
+        verb: 'TALK',
         priority: 3,
         onInteract: () => this.talkTo(npc),
       })
@@ -1231,6 +1238,7 @@ export class WorldScene extends Phaser.Scene {
         },
         radius: 18,
         prompt: 'Pet Byte',
+        verb: 'PET',
         onInteract: () => {
           play('meow')
           this.tweens.add({ targets: cat.sprite, scaleY: 0.8, scaleX: 1.2, duration: 100, yoyo: true })
