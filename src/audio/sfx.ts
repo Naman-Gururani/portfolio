@@ -407,7 +407,7 @@ export const sfx = {
 
 /*
  * Listening harness (browser, Vite dev server running):
- *   const { sfx } = await import('/lineage/src/audio/sfx.ts')
+ *   const { sfx } = await import('/portfolio/src/audio/sfx.ts')
  *   sfx.resume()                                // inside a click handler / after a click
  *   for (const k of Object.keys(sfx)) if (typeof sfx[k] === 'function' && !/^(set|is|resume)/.test(k)) {
  *     await new Promise(r => setTimeout(r, 700)); console.log(k); sfx[k]()

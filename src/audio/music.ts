@@ -488,8 +488,8 @@ onAudioReady(() => {
 
 /*
  * Listening harness (browser, Vite dev server running):
- *   const { music } = await import('/lineage/src/audio/music.ts')
- *   const { audio } = await import('/lineage/src/audio/engine.ts')
+ *   const { music } = await import('/portfolio/src/audio/music.ts')
+ *   const { audio } = await import('/portfolio/src/audio/engine.ts')
  *   audio.unlock()                      // after a click on the page
  *   music.play('day')                   // then try 'night', 'interior', 'tower', 'engine', 'title'
  *   music.play('fanfare')               // overlays + ducks the current loop

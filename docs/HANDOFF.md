@@ -107,12 +107,12 @@ Browser-verified twice on a **static build** (`npm run build && npx vite preview
 
 ```bash
 npm install
-npm run dev                                     # http://localhost:5173/lineage/  (hot-reloads; fine for solo work)
+npm run dev                                     # http://localhost:5173/portfolio/  (hot-reloads; fine for solo work)
 npm run build && npx vite preview --port 4173   # static preview — what every browser check and screenshot must use
 npx vitest run && npx tsc --noEmit              # gates (66 files / 1105 tests; tsc clean)
-npm run build && npx gh-pages -d dist           # deploy (USER-TRIGGERED ONLY) → gh-pages branch → naman-gururani.github.io/lineage
+npm run build && npx gh-pages -d dist           # deploy (USER-TRIGGERED ONLY) → gh-pages branch → naman-gururani.github.io/portfolio
 ```
-- **Play-test URL:** `http://localhost:4173/lineage/?fresh=1` (clean save → Bo's arrival). Dev shortcuts: `&cheat=1` (Skip button in every game), `&word=kafka` (Wordle answer), `&duck=gold`, `&st=1` (timer stepping for scripts). A fresh save is seeded only from the title screen.
+- **Play-test URL:** `http://localhost:4173/portfolio/?fresh=1` (clean save → Bo's arrival). Dev shortcuts: `&cheat=1` (Skip button in every game), `&word=kafka` (Wordle answer), `&duck=gold`, `&st=1` (timer stepping for scripts). A fresh save is seeded only from the title screen.
 - **Scripted walks:** `node scratch/recheck.cjs` (full spine), `recheck2/3.cjs` (feedback items), `recheck4.cjs` (HUD focus), `recheck5.cjs` (HUD layout at four widths), `recheck6.cjs` (Skills card) — they need the preview on :4173 and write `scratch/shots/*.png`. If the Playwright MCP tools say the browser is in use, these scripts are the fallback (gotcha 14).
 - **New session:** `/getcontext` (reads this file, verifies against `git status` + the gates). The ledger `.superpowers/sdd/2026-09-02-fair/progress.md` holds every ruling in order; the v4 spec's §13 lists every dated amendment.
 - **State of the branches:** `main`, `v3/story-isle` and both remotes point at the same commit; the live site tracks the gh-pages branch (the last `npx gh-pages -d dist` from this tree). New work can start from `main`.

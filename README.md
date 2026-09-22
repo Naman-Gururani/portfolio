@@ -1,7 +1,7 @@
 # Naman's World Fair 🎪
 
 **An open-world pixel-art game that happens to be a portfolio.**
-[**naman-gururani.github.io/lineage**](https://naman-gururani.github.io/lineage/)
+[**naman-gururani.github.io/portfolio**](https://naman-gururani.github.io/portfolio/)
 
 ---
 

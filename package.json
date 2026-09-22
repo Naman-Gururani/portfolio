@@ -1,9 +1,9 @@
 {
-  "name": "lineage",
+  "name": "portfolio",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Naman's World — Lineage Isle: an explorable pixel-art open-world game-portfolio for Naman Gururani.",
+  "description": "Naman's World Fair: an explorable pixel-art open-world game-portfolio for Naman Gururani.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
