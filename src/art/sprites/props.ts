@@ -1049,6 +1049,35 @@ const BOBBER_ROWS = [
 
 const ROD_TIP_ROWS = ['......53', '.....553', '....553.', '...553..', '..553...', '.553....', '553.....', '53......']
 
+/**
+ * "Here" — the marker the guided walk bobs over the door it is taking you to.
+ * Drawn pointing DOWN so the tip lands on the thing it means, and lit from the
+ * top-left like everything else: bright rim along the top and left edges, the
+ * dark step down the right.
+ */
+const GUIDE_ARROW_ROWS = [
+  '..................',
+  '......HHHHHH......',
+  '......HMMMMD......',
+  '......HMMMMD......',
+  '......HMMMMD......',
+  '......HMMMMD......',
+  '......HMMMMD......',
+  '......HMMMMD......',
+  '......HMMMMD......',
+  '......HMMMMD......',
+  '......HMMMMD......',
+  '.HHHHHHHHHHHHHHHH.',
+  '..HMMMMMMMMMMMMD..',
+  '...HMMMMMMMMMMD...',
+  '....HMMMMMMMMD....',
+  '.....HMMMMMMD.....',
+  '......HMMMMD......',
+  '.......HMMD.......',
+  '........HD........',
+  '..................',
+]
+
 /* ------------------------------------------------------------------ *
  * speech bubbles — procedural shell, hand-placed glyphs
  * ------------------------------------------------------------------ */
@@ -1168,6 +1197,8 @@ export const PROP_DEFS: SpriteDef[] = [
     { anchor: [6, 8] },
   ),
   ascii('rod_tip', ROD_TIP_ROWS, { '5': 'wood5', '3': 'wood3' }, { outline: undefined, anchor: [4, 4] }),
+  // Anchored on its own tip, so placing it at a door puts the point on the door.
+  ascii('guide_arrow', GUIDE_ARROW_ROWS, { H: 'yellow7', M: 'yellow5', D: 'yellow3' }, { anchor: [9, 19] }),
   { name: 'bubble_excl', w: 24, h: 28, legend: {}, paint: bubble(24, 28, EXCL_GLYPH) },
   { name: 'bubble_quest', w: 24, h: 28, legend: {}, paint: bubble(24, 28, QUEST_GLYPH) },
   { name: 'bubble_dots', w: 28, h: 24, legend: {}, paint: bubble(28, 24, DOTS_GLYPH) },

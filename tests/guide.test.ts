@@ -1,11 +1,25 @@
 import { describe, expect, it } from 'vitest'
-import { REACH_PX, routeTiles, stepAlong, waypoints } from '../src/systems/guide'
+import { REACH_PX, guideTarget, routeTiles, stepAlong, waypoints } from '../src/systems/guide'
 import { TILE, WORLD_TH, WORLD_TW } from '../src/config'
 import { makeGrid, T } from '../src/world/terrain'
 import { BLUEPRINT, attractionSolids, boundarySolids, structureSolids } from '../src/world/blueprint'
 
 /** A flat lawn; the walls come from the `blocked` predicate each test passes. */
 const lawn = (w: number, h: number) => makeGrid(w, h, T.GRASS)
+
+describe('guideTarget', () => {
+  it('sends every locked destination to the gate before the ticket', () => {
+    for (const a of BLUEPRINT.attractions) expect(guideTarget(a.id, false)).toBe('gate')
+  })
+
+  it('goes where it was asked once the ticket is won', () => {
+    for (const a of BLUEPRINT.attractions) expect(guideTarget(a.id, true)).toBe(a.id)
+  })
+
+  it('never redirects the gate to itself in a loop', () => {
+    expect(guideTarget('gate', false)).toBe('gate')
+  })
+})
 
 describe('routeTiles', () => {
   it('walks a straight line across open lawn', () => {

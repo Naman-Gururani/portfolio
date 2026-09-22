@@ -17,6 +17,7 @@
 // with `world:guide` and listens for `guide:state` to draw the bar.
 import { events } from '../core/events'
 import { MISSIONS, missionStatus, statusLabel, type Mission, type MissionStatus, type MissionView } from '../data/missions'
+import { guideTarget } from '../systems/guide'
 import { BLUEPRINT } from '../world/blueprint'
 import { closeAllModals, el, esc, openModal, uiRoot } from './modal'
 import { panelHead, registerPanel, wireClose } from './panels'
@@ -58,17 +59,6 @@ function view(): MissionView {
     discovered: uiState.stats.discoveries,
     ticket: !!uiState.flags.ticket,
   }
-}
-
-/**
- * Where "take me there" actually goes. Before the ticket the turnstiles are
- * solid and there is provably no route into the park, so a walk to anything
- * past the gate would set off down a road that does not exist. Every locked row
- * quietly redirects to Bo — and says so in its own words above the button, so
- * the redirect is never a surprise.
- */
-export function guideTarget(id: string, ticket: boolean): string {
-  return !ticket && id !== 'gate' ? 'gate' : id
 }
 
 /**

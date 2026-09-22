@@ -18,6 +18,23 @@ export const REACH_PX = 10
 
 const PAVED = new Set<number>([T.PLAZA, T.PATH, T.BRIDGE, T.DOCK])
 
+/**
+ * Where "take me there" actually goes. Before the ticket the turnstiles are
+ * solid and there is provably no route into the park (see the gate pair in
+ * `tests/guide.test.ts`), so a walk to anything past the gate would set off down
+ * a road that does not exist. Every locked destination quietly redirects to Bo.
+ *
+ * This is the one place that rule lives: the Missions sheet reads it to label
+ * its buttons, and the world reads it before it routes, so the sheet and the
+ * fair can never disagree about where a button is going to take you. It is also
+ * the reason a null route is not treated as "fade them there" — a ticketless
+ * player who could be fade-travelled into the park would skip the gate, which is
+ * the spine of the whole game.
+ */
+export function guideTarget(id: string, ticket: boolean): string {
+  return !ticket && id !== 'gate' ? 'gate' : id
+}
+
 export function routeTiles(grid: Grid, from: Vec2, to: Vec2, blocked: TileBlocked): Vec2[] | null {
   if (!grid.inb(Math.floor(to.x), Math.floor(to.y))) return null
   return astar(grid, from, to, (t, x, y) => {

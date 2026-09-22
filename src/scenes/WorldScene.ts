@@ -35,6 +35,7 @@ import { DialogueRunner, type Tree } from '../systems/Dialogue'
 import { getTree, linesTree, npcInfo } from '../systems/DialogueRegistry'
 import { Ducks } from '../systems/Ducks'
 import { GameState } from '../systems/GameState'
+import { guideTarget, routeTiles, stepAlong, waypoints, type TileBlocked } from '../systems/guide'
 import { InteractSystem, type Interactable } from '../systems/Interact'
 import { minigames } from '../systems/Minigame'
 import { verbFor } from '../systems/verbs'
@@ -79,6 +80,23 @@ function fountainAt(): { x: number; y: number } {
  * of the world is hidden by this.
  */
 const NIGHT_GLOW_DEPTH = 91000
+
+/**
+ * The guided walk's two depths. The marker sits above even the night veil —
+ * being told where you are going is not a thing darkness should take away — and
+ * the trail sits just over the ground and the flat decor (drawn at `y - 4000`)
+ * but under everything the world sorts by its feet, so the dots read as chalk
+ * on the path rather than as confetti in front of the booths.
+ */
+const GUIDE_ARROW_DEPTH = NIGHT_GLOW_DEPTH + 500
+const GUIDE_TRAIL_DEPTH = -2000
+/** At most this many dots, however long the walk — a dotted line, not a hose. */
+const GUIDE_DOTS = 24
+/** A dot this close is behind you now; it goes out as you pass it. */
+const GUIDE_DOT_PASSED = 40
+/** Forward progress under this much, for this long, means the walk is wedged. */
+const GUIDE_PROGRESS_PX = 6
+const GUIDE_STUCK_MS = 1500
 
 /** Play a sound by name if the audio module provides it (some land later). */
 const play = (name: string, fallback?: string) => {
@@ -192,6 +210,24 @@ export class WorldScene extends Phaser.Scene {
   /** Directional input was held this frame — a hop reads it rather than actual travel. */
   private wantsMove = false
   private inCutscene = false
+  /**
+   * A guided walk in progress: which attraction, the corners still to turn, the
+   * two sprites that show the way, and the watchdog that notices when the walk
+   * has stopped getting anywhere.
+   */
+  private guide: {
+    id: string
+    wps: Vec2[]
+    i: number
+    arrow?: Phaser.GameObjects.Image
+    dots: Phaser.GameObjects.Image[]
+    /** Where the last real progress was made, and how long ago that was. */
+    lastX: number
+    lastY: number
+    stuckMs: number
+    /** The watchdog's one re-route, spent. */
+    retried: boolean
+  } | null = null
   private dust!: Phaser.GameObjects.Particles.ParticleEmitter
   private sparks!: Phaser.GameObjects.Particles.ParticleEmitter
   private grassBits!: Phaser.GameObjects.Particles.ParticleEmitter
@@ -245,6 +281,7 @@ export class WorldScene extends Phaser.Scene {
     this.unsub.push(events.on('game:continue', () => this.startPlay(loadSave(), false)))
     this.unsub.push(events.on('game:title', () => this.backToTitle()))
     this.unsub.push(events.on('world:travel', ({ id }) => this.travelTo(id)))
+    this.unsub.push(events.on('world:guide', ({ id }) => this.startGuide(id)))
     this.unsub.push(
       events.on('world:action', ({ action }) =>
         action === 'interact' ? this.onAction() : action === 'jump' ? this.onJump() : action === 'menu' ? this.onMenu() : this.onPanel(action),
@@ -268,6 +305,10 @@ export class WorldScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const u of this.unsub) u()
       this.unsub = []
+      // The marker and the trail are plain scene objects: Phaser takes them with
+      // the display list, but the bar up in the DOM belongs to nobody and would
+      // sit there naming a walk that no longer exists.
+      this.stopGuide()
     })
 
     if (this.mode === 'title') this.enterTitle()
@@ -301,6 +342,9 @@ export class WorldScene extends Phaser.Scene {
     this.regionId = ''
     this.inCutscene = false
     this.locked = false
+    // Dropped rather than stopped: the sprites it held went down with the old
+    // scene, and `shutdown` has already taken the bar off the screen.
+    this.guide = null
     // The hero and the run go with the old scene: keeping them would let a
     // later ui:lock (opening Settings from the title, say) call freeze() on a
     // destroyed Player, whose anims Phaser has already nulled. `backToTitle`
@@ -824,6 +868,9 @@ export class WorldScene extends Phaser.Scene {
   private setLocked(v: boolean) {
     this.locked = v
     if (v) {
+      // A modal is somebody asking for their attention back. Whatever we were
+      // walking them towards, they are not watching it any more.
+      this.stopGuide()
       this.player?.freeze(true)
       this.interact.hide()
     } else this.player?.freeze(false)
@@ -1202,6 +1249,8 @@ export class WorldScene extends Phaser.Scene {
   private travelTo(id: string) {
     const a = BLUEPRINT.attractions.find((x) => x.id === id)
     if (!a || !this.player) return
+    // Nothing to walk any more, and nothing for a marker to point at.
+    this.stopGuide()
     const x = a.door.x * TILE + TILE / 2
     const y = a.door.y * TILE + TILE / 2
     this.cameras.main.fadeOut(180, 0, 0, 0)
@@ -1597,6 +1646,192 @@ export class WorldScene extends Phaser.Scene {
     })
   }
 
+  /* ---------------- take me there ---------------- */
+
+  /**
+   * Walk the player to an attraction's door, because the Missions sheet asked.
+   *
+   * It is a favour, not a cutscene: they keep the controls the whole way, and
+   * the first thing they do with them ends it. The route is the world's own A*,
+   * the steering is `systems/guide`, and the walking itself is the ordinary
+   * `player.move` the joystick drives — so collision, footsteps, the run of the
+   * animation and the region banners are all exactly as they are by hand.
+   */
+  private startGuide(id: string): void {
+    if (this.mode !== 'play' || !this.player || !this.state || this.locked || this.inCutscene) return
+    // The gate rule, read from the same function the sheet labelled its button
+    // with, so the fair can never take somebody somewhere the button did not
+    // promise. Before the ticket, every destination is Bo.
+    const target = guideTarget(id, this.state.flag('ticket'))
+    const a = BLUEPRINT.attractions.find((x) => x.id === target)
+    if (!a) return
+    this.stopGuide()
+    const path = this.guideRoute(a)
+    if (!path) return this.guideFallback(a)
+    this.beginGuide(a, path, false)
+  }
+
+  /**
+   * Every tile a walk is not allowed through, baked into one flat lookup per
+   * route: unwalkable terrain at the tile's centre, or any solid overlapping
+   * the tile at all.
+   *
+   * Conservative on purpose — the hero is 10px wide in a 32px tile, so a tile
+   * with a bench in it is not one to route a stranger through — and baked
+   * rather than tested live because the alternative is running every solid at
+   * the fair against every tile A* opens.
+   */
+  private guideBlocked(solids: Solid[]): TileBlocked {
+    const { w, h } = this.grid
+    const map = new Uint8Array(w * h)
+    for (let ty = 0; ty < h; ty++)
+      for (let tx = 0; tx < w; tx++) if (this.blocked(tx * TILE + TILE / 2, ty * TILE + TILE / 2)) map[ty * w + tx] = 1
+    for (const s of solids) {
+      const x0 = Math.max(0, Math.floor(s.x / TILE))
+      const x1 = Math.min(w - 1, Math.ceil((s.x + s.w) / TILE) - 1)
+      const y0 = Math.max(0, Math.floor(s.y / TILE))
+      const y1 = Math.min(h - 1, Math.ceil((s.y + s.h) / TILE) - 1)
+      for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) map[y * w + x] = 1
+    }
+    return (tx, ty) => (tx < 0 || ty < 0 || tx >= w || ty >= h ? true : map[ty * w + tx] === 1)
+  }
+
+  /**
+   * The route from where the player stands to a door, or null when there is
+   * none.
+   *
+   * Two passes. The first respects every solid at the fair; the second drops
+   * the low furniture — a bench, a fence rail, a crate — that `moveAndSlide`
+   * nudges around anyway, so somebody who has parked themselves in the middle
+   * of a picnic set is not declared unreachable over 22 pixels of wood. The
+   * turnstiles, the perimeter and every booth are hard solids and stand through
+   * both passes: a shut gate is never routed through, on either.
+   */
+  private guideRoute(a: Attraction): Vec2[] | null {
+    const from = { x: Math.floor(this.player.x / TILE), y: Math.floor(this.player.y / TILE) }
+    return routeTiles(this.grid, from, a.door, this.guideBlocked(this.solids)) ?? routeTiles(this.grid, from, a.door, this.guideBlocked(this.hardSolids))
+  }
+
+  /** Hold the route, show the way, and tell the bar where we are going. */
+  private beginGuide(a: Attraction, path: Vec2[], retried: boolean): void {
+    this.stopGuide()
+    this.guide = { id: a.id, wps: waypoints(path), i: 0, dots: [], lastX: this.player.x, lastY: this.player.y, stuckMs: 0, retried }
+    this.showGuide(a, path)
+    events.emit('guide:state', { to: a.id })
+  }
+
+  /**
+   * The way shown rather than merely taken: a marker bobbing on the door you
+   * are being walked to, and a dotted line along the road to it. Being led
+   * somewhere without being told where is how a player stops trusting the
+   * button; this is the difference between a guide and a tow.
+   */
+  private showGuide(a: Attraction, path: Vec2[]): void {
+    const g = this.guide
+    if (!g) return
+    if (hasFrame(this, 'guide_arrow')) {
+      const x = a.door.x * TILE + TILE / 2
+      const y = a.door.y * TILE + TILE / 2 - 18
+      const arrow = this.add.image(x, y, ATLAS, 'guide_arrow').setDepth(GUIDE_ARROW_DEPTH)
+      if (!this.reduced) this.tweens.add({ targets: arrow, y: y - 12, duration: 520, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+      g.arrow = arrow
+    }
+    if (!hasFrame(this, 'spark')) return
+    const step = Math.max(1, Math.ceil(path.length / GUIDE_DOTS))
+    for (let i = step; i < path.length - 1; i += step) {
+      const p = path[i]
+      const x = p.x * TILE + TILE / 2
+      const y = p.y * TILE + TILE / 2
+      // Dimmer the further off it is, so the near end of the line reads as the
+      // next step rather than as one mark among twenty.
+      const fade = 0.9 - 0.35 * (i / path.length)
+      // Two marks, not one: a soft dark disc under a bright one. A single gold
+      // dot vanishes into the gold-and-grey paving it is drawn on, which is
+      // most of the ground the trail ever crosses.
+      const shade = this.add.image(x, y, ATLAS, 'spark').setDepth(GUIDE_TRAIL_DEPTH).setScale(4).setTint(0x2a2340).setAlpha(fade * 0.5)
+      const dot = this.add.image(x, y, ATLAS, 'spark').setDepth(GUIDE_TRAIL_DEPTH + 1).setScale(2.5).setTint(0xffd23f).setAlpha(fade)
+      if (!this.reduced) {
+        const delay = (i / step) * 70
+        this.tweens.add({ targets: shade, alpha: { from: fade * 0.5, to: fade * 0.22 }, duration: 760, yoyo: true, repeat: -1, delay })
+        this.tweens.add({ targets: dot, alpha: { from: fade, to: fade * 0.45 }, duration: 760, yoyo: true, repeat: -1, delay })
+      }
+      g.dots.push(shade, dot)
+    }
+  }
+
+  /**
+   * Take the walk down — the sprites, the state, and the bar in the overlay.
+   * Called from everywhere a walk can end, including `shutdown`: a marker left
+   * behind across a scene restart is a sprite nobody owns pointing at a door
+   * nobody is walking to.
+   */
+  private stopGuide(): void {
+    const g = this.guide
+    this.guide = null
+    if (g?.arrow) {
+      this.tweens.killTweensOf(g.arrow)
+      g.arrow.destroy()
+    }
+    for (const d of g?.dots ?? []) {
+      this.tweens.killTweensOf(d)
+      d.destroy()
+    }
+    events.emit('guide:state', { to: null })
+  }
+
+  /**
+   * Arrived. Face the door and stand there — the ordinary interact update on
+   * this same frame then raises the prompt, which is what puts the verb on the
+   * action button and starts it blinking. Nobody is told what to press; they
+   * are simply standing in front of it when it starts asking.
+   */
+  private arriveGuide(): void {
+    this.stopGuide()
+    this.player.dir = 'up'
+    this.player.idle()
+  }
+
+  /**
+   * The walk has stopped getting anywhere: a corner slid into, a keeper
+   * standing in a doorway, a gate that shut behind us. Re-route once from where
+   * the player actually is; if that does not help either, fall back.
+   */
+  private guideStuck(): void {
+    const g = this.guide
+    if (!g) return
+    const a = BLUEPRINT.attractions.find((x) => x.id === g.id)
+    if (!a) return this.stopGuide()
+    if (!g.retried) {
+      const path = this.guideRoute(a)
+      if (path) return this.beginGuide(a, path, true)
+    }
+    this.guideFallback(a)
+  }
+
+  /**
+   * The walk cannot be made. What happens next depends entirely on *why*.
+   *
+   * Before the ticket there is no route to anything inside the fence, because
+   * the two turnstiles fill the only gap in it exactly — that is the park being
+   * shut, not the player being stuck, and the answer is Bo at the gate, never a
+   * fade. Carrying a ticketless player past the turnstiles would hand them
+   * every card in the game without the one puzzle the whole fair is built
+   * around, so this is the line that must not be crossed.
+   *
+   * Only when the destination is genuinely open and this particular player
+   * still cannot reach it — boxed in under the coaster spans, say — does the
+   * map's own fade-travel take over, and only once the re-route has failed too.
+   */
+  private guideFallback(a: Attraction): void {
+    this.stopGuide()
+    if (!this.state?.flag('ticket') && a.id !== 'gate') {
+      this.startGuide('gate')
+      return
+    }
+    events.emit('ui:toast', { kind: 'info', icon: '🧭', title: 'No clear way from here', sub: 'Taking you straight there.' })
+    this.travelTo(a.id)
+  }
+
   /* ---------------- per frame ---------------- */
 
   private readonly blocked: Blocked = (px, py) => {
@@ -1646,6 +1881,10 @@ export class WorldScene extends Phaser.Scene {
       let dy = 0
       // the pace modifier, not a speed: Player inverts it when always-run is on
       let paceMod = false
+      // A modal, a cutscene, a ride: anything that takes the controls away takes
+      // the walk with it. One test here rather than a `stopGuide()` at every
+      // place that sets `inCutscene`, so a cutscene added later cannot forget.
+      if (this.guide && (this.locked || this.inCutscene)) this.stopGuide()
       if (!this.locked && !this.inCutscene) {
         if (keys.any('ArrowLeft', 'KeyA')) dx -= 1
         if (keys.any('ArrowRight', 'KeyD')) dx += 1
@@ -1672,6 +1911,20 @@ export class WorldScene extends Phaser.Scene {
             this.onJump()
           }
         }
+        if (this.guide) {
+          // Any push on a stick, a key or a pad is the player taking the walk
+          // back, and they get it back on the same frame they ask.
+          if (Math.hypot(dx, dy) > 0.15) this.stopGuide()
+          else {
+            const s = stepAlong(this.player.x, this.player.y, this.guide.wps, this.guide.i)
+            this.guide.i = s.i
+            if (s.arrived) this.arriveGuide()
+            else {
+              dx = s.dx
+              dy = s.dy
+            }
+          }
+        }
       }
       this.wantsMove = Math.hypot(dx, dy) > 0.15
       const px0 = this.player.x
@@ -1694,6 +1947,24 @@ export class WorldScene extends Phaser.Scene {
           r.play('ripple')
           r.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => r.destroy())
         }
+      }
+      if (this.guide) {
+        const g = this.guide
+        // Progress, not speed: sliding along a wall moves you every single
+        // frame and gets you nowhere, and that is exactly the state worth
+        // noticing. One re-route, then the fallback.
+        if (Math.hypot(this.player.x - g.lastX, this.player.y - g.lastY) > GUIDE_PROGRESS_PX) {
+          g.lastX = this.player.x
+          g.lastY = this.player.y
+          g.stuckMs = 0
+        } else {
+          g.stuckMs += dms
+          if (g.stuckMs >= GUIDE_STUCK_MS) this.guideStuck()
+        }
+        // The trail burns down behind you, so what is left of it is what is
+        // left of the walk.
+        if (this.guide === g)
+          for (const d of g.dots) if (d.visible && Math.hypot(d.x - this.player.x, d.y - this.player.y) < GUIDE_DOT_PASSED) d.setVisible(false)
       }
       if (!this.locked && !this.inCutscene) this.interact.update(this.player.x, this.player.y)
       // A ticket is picked up a couple of dozen times in a whole playthrough, so
