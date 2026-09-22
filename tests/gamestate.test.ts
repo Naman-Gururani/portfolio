@@ -596,3 +596,24 @@ describe('wardrobe panel', () => {
   })
 })
 
+describe('guide hint', () => {
+  it('nudges a touch player toward Missions once, and stays quiet once the flag is set', () => {
+    const state = new GameState(null)
+    const hints: (string | null)[] = []
+    const off = events.on('ui:hint', ({ text }) => hints.push(text))
+
+    state.guideHintOnce(false) // keyboard/mouse: never speaks, no flag set
+    expect(hints).toEqual([])
+    expect(state.flag('guide_hint')).toBe(false)
+
+    state.guideHintOnce(true)
+    expect(hints).toEqual(['Lost? Tap Missions — it can walk you there.'])
+    expect(state.flag('guide_hint')).toBe(true)
+
+    state.guideHintOnce(true) // same save asked again: the flag keeps it quiet
+    expect(hints).toEqual(['Lost? Tap Missions — it can walk you there.'])
+
+    off()
+  })
+})
+

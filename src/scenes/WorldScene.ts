@@ -105,6 +105,19 @@ const play = (name: string, fallback?: string) => {
   fn?.()
 }
 
+/**
+ * Coarse-pointer layout — the same test the welcome card and the dialogue box
+ * use to swap in touch wording. Local rather than shared: every caller wants
+ * exactly this check and no fallback chain beyond it.
+ */
+function touchLayout(): boolean {
+  try {
+    return typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches
+  } catch {
+    return false
+  }
+}
+
 // Only the kinds `world/scatter.ts` actually emits on the fairground. The
 // island's palms, pines, rocks, mushrooms, shells, stumps and logs went with the
 // coastline; a kind with no entry here simply is not drawn.
@@ -1559,6 +1572,10 @@ export class WorldScene extends Phaser.Scene {
     const gate = BLUEPRINT.attractions.find((a) => a.id === 'gate')
     if (gate) this.discoverAttraction(gate)
     events.emit('ui:hint', { text: 'WASD / arrows to move · Space to hop · E to talk' })
+    // A touch player has no keyboard to read that hint, so — once per save,
+    // now that Bo's greeting is out of the way — it is replaced with the one
+    // line that matters to them: the Missions sheet can walk you anywhere.
+    this.state.guideHintOnce(touchLayout())
     events.emit('ui:banner', { title: 'The Gate', sub: "Naman's World Fair" })
     this.state.save.tutorialDone = true
     this.state.dirty = true

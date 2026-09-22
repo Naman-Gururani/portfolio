@@ -23,11 +23,17 @@ const HOWTO_KEYS: HowRow[] = [
   { k: 'Interact', v: 'E' },
 ]
 
-/** Touch legend — matches the on-screen stick and the A/B buttons. */
+/**
+ * Touch legend — the action button now names its own verb rather than a
+ * letter, so this describes it rather than labels it. `Lost?` is the one
+ * line in the whole card that points at a button instead of explaining a
+ * control: the Missions sheet is the phone player's map of the fair.
+ */
 const HOWTO_TOUCH: HowRow[] = [
-  { k: 'Move', v: 'left stick' },
-  { k: 'Jump', v: 'B' },
-  { k: 'Interact', v: 'A' },
+  { k: 'Move', v: 'drag the stick' },
+  { k: 'Jump', v: 'JUMP' },
+  { k: 'Do things', v: 'the big button — it names what it will do' },
+  { k: 'Lost?', v: 'Missions walks you there' },
 ]
 
 let card: HTMLElement | null = null

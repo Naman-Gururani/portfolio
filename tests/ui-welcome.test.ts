@@ -338,8 +338,17 @@ describe('welcome card', () => {
         }) as unknown as MediaQueryList,
     )
     show(false)
-    expect(rows()).toEqual(['Move — left stick', 'Jump — B', 'Interact — A'])
+    expect(rows()).toEqual([
+      'Move — drag the stick',
+      'Jump — JUMP',
+      'Do things — the big button — it names what it will do',
+      'Lost? — Missions walks you there',
+    ])
     expect(card().classList.contains('welcome-touch')).toBe(true)
+    // What matters, said plainly: the action button names its own verb...
+    expect(rows().some((r) => /names what it will do/.test(r))).toBe(true)
+    // ...and a lost player is pointed at the Missions button by name.
+    expect(rows().some((r) => r.includes('Missions'))).toBe(true)
   })
 
   it('re-reads storage when the world bounces back to the title', () => {

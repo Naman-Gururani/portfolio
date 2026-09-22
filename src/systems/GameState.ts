@@ -243,6 +243,20 @@ export class GameState {
     this.dirty = true
   }
 
+  /**
+   * The one nudge a touch player gets toward the Missions button — once per
+   * save, and only ever called right after Bo's arrival greeting closes. The
+   * fair stays an open world otherwise; this is the single exception, made
+   * because a phone has no keyboard hint to read in its place. `guide_hint`
+   * remembers it fired, so a save that has already heard it never hears it
+   * again.
+   */
+  guideHintOnce(touch: boolean): void {
+    if (!touch || this.flag('guide_hint')) return
+    events.emit('ui:hint', { text: 'Lost? Tap Missions — it can walk you there.' })
+    this.setFlag('guide_hint')
+  }
+
   /* ---------- wardrobe ---------- */
 
   /**
