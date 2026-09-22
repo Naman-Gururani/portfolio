@@ -61,7 +61,7 @@ function build(): HTMLElement {
         <button type="button" class="wlink" data-act="reader">Reader Mode</button>
       </nav>
       <div class="welcome-actions">
-        <button type="button" class="wbtn primary" data-act="start" aria-label="Start the game"><span aria-hidden="true">▶ </span>Start</button>
+        <button type="button" class="wbtn primary nudge" data-act="start" aria-label="Start the game"><span aria-hidden="true">▶ </span>Start</button>
         <button type="button" class="wbtn" data-act="new" hidden>New Game</button>
         <button type="button" class="wbtn" data-act="settings">Settings</button>
       </div>

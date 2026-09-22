@@ -13,6 +13,7 @@ export function initPrompt(root: HTMLElement): void {
     el.innerHTML = `<kbd class="pkey">${key ?? 'E'}</kbd><span></span>`
     ;(el.querySelector('span') as HTMLElement).textContent = text
     el.classList.add('show')
+    el.querySelector('.pkey')?.classList.add('nudge')
   })
   const hint = document.createElement('div')
   hint.className = 'hint'

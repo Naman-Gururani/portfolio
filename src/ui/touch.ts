@@ -81,6 +81,7 @@ export function initTouch(root: HTMLElement): void {
     aVerb.textContent = idle ? IDLE_VERB : verb ?? verbFor({ prompt: text })
     a.setAttribute('aria-label', idle ? 'Swing the wrench' : text)
     a.classList.toggle('idle', idle)
+    a.classList.toggle('nudge', !idle)
   })
 
   const wantTouch = () => window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0

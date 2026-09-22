@@ -169,9 +169,11 @@ export function openMap(data?: { focus?: string }): void {
       const chapters = chaptersOf(a)
       hint.innerHTML = `<b>${esc(a.name)}</b>` + (chapters ? ` <span class="map-tag">${esc(chapters)}</span>` : '')
       travel.disabled = false
+      travel.classList.toggle('nudge', !travel.disabled)
     } else {
       hint.textContent = 'An undiscovered place — you will have to find it on foot.'
       travel.disabled = true
+      travel.classList.toggle('nudge', !travel.disabled)
     }
   }
   const goTo = (id: string) => {

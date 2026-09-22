@@ -84,6 +84,19 @@ function placeBelowHud(r: HTMLElement): void {
   r.style.top = top && hudBottom > 0 ? `${Math.round(hudBottom + 10)}px` : ''
 }
 
+/**
+ * Coarse-pointer layouts get a real tap target on the continue cue — a
+ * mouse-and-keyboard layout already advances on Enter (the box's own click
+ * handler already reaches the arrow too), so the arrow stays decorative there.
+ */
+function touchLayout(): boolean {
+  try {
+    return typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches
+  } catch {
+    return false
+  }
+}
+
 function ensure(): HTMLElement {
   if (root) {
     if (!root.isConnected) uiRoot().appendChild(root)
@@ -110,6 +123,21 @@ function ensure(): HTMLElement {
   typed = q('.dlg-typed')
   choicesEl = q('.dlg-choices')
   next = q('.dlg-next')
+  if (touchLayout()) {
+    // No longer decoration once it can be tapped: a real role, a name worth
+    // reading, and a place in the tab order.
+    next.removeAttribute('aria-hidden')
+    next.setAttribute('role', 'button')
+    next.tabIndex = 0
+    next.textContent = 'Tap to continue'
+    next.addEventListener('click', (e) => {
+      // `next` sits inside `.dlg-box`, whose own click handler below already
+      // advances the same way once typing has finished — stop it bubbling
+      // there so a tap on the arrow itself advances exactly once.
+      e.stopPropagation()
+      act()
+    })
+  }
   box.addEventListener('click', (e) => {
     if (!current) return
     const c = (e.target as HTMLElement).closest<HTMLElement>('.dlg-choice')
@@ -211,6 +239,7 @@ function showLine(): void {
   choicesEl.hidden = true
   choicesEl.innerHTML = ''
   next.hidden = true
+  next.classList.remove('nudge')
   s.choosing = false
   s.full = line.text
   s.chars = Array.from(line.text)
@@ -238,7 +267,10 @@ function doneTyping(s: Session): void {
   s.typing = false
   typed.textContent = s.full
   if (s.runner.atChoice) showChoices()
-  else next.hidden = false
+  else {
+    next.hidden = false
+    next.classList.add('nudge')
+  }
 }
 
 function completeLine(): void {
@@ -255,6 +287,7 @@ function showChoices(): void {
   s.choosing = true
   s.choiceIdx = 0
   next.hidden = true
+  next.classList.remove('nudge')
   choicesEl.innerHTML = cs.map((c, i) => `<li><button type="button" class="dlg-choice" data-i="${i}">${esc(c.text)}</button></li>`).join('')
   choicesEl.hidden = false
   highlight()

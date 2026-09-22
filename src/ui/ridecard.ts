@@ -70,7 +70,7 @@ function ensure(): HTMLElement {
   box.innerHTML =
     '<p class="ride-kicker"></p><h3 class="ride-title"></h3><p class="ride-line"></p>' +
     '<div class="ride-foot">' +
-    '<button type="button" class="pbtn primary ride-next">Next ▶</button>' +
+    '<button type="button" class="pbtn primary ride-next nudge">Next ▶</button>' +
     '<span class="ride-keys">Enter · Space · E</span>' +
     '</div>'
   nextBtn = box.querySelector<HTMLButtonElement>('.ride-next')

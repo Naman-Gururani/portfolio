@@ -57,6 +57,7 @@ describe('touch buttons', () => {
     events.emit('ui:prompt', { text: null })
     expect(a().textContent).toContain('SWING')
     expect(a().classList.contains('idle')).toBe(true)
+    expect(a().classList.contains('nudge')).toBe(false)
   })
 
   it('takes the verb and the prompt of whatever is in range', () => {
@@ -64,6 +65,7 @@ describe('touch buttons', () => {
     expect(a().textContent).toContain('RIDE')
     expect(a().getAttribute('aria-label')).toBe('Career Coaster')
     expect(a().classList.contains('idle')).toBe(false)
+    expect(a().classList.contains('nudge')).toBe(true)
   })
 
   it('falls back to a verb when the event carries none', () => {

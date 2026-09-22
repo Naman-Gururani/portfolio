@@ -978,6 +978,34 @@ body.cutscene .touch {
   animation: none !important;
 }
 
+/* ---------- the nudge ----------
+   One treatment for "this is the thing to press". A ring grows out of the
+   control and fades; the control itself does not move, so a thumb already on
+   the way does not miss. Under reduced motion the ring stops animating but
+   stays drawn — the cue is the whole point, so it is never removed. */
+.nudge {
+  position: relative;
+}
+.nudge::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
+  border: 2px solid var(--accent-warm);
+  opacity: 0;
+  pointer-events: none;
+  animation: nudgering 1.15s var(--ease) infinite;
+}
+@keyframes nudgering {
+  0% { transform: scale(0.94); opacity: 0.9; }
+  70% { transform: scale(1.12); opacity: 0; }
+  100% { transform: scale(1.12); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nudge::after { animation: none; opacity: 0.95; transform: none; }
+}
+:root.reduce-motion .nudge::after { animation: none; opacity: 0.95; transform: none; }
+
 /* Mid widths: the chip card must stop short of the Map / Journal / Menu / Sound
    cluster on the right (about 370px with its labels) instead of running under
    it; the chips wrap inside the card instead. */
