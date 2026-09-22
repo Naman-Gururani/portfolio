@@ -1,4 +1,5 @@
 import { events, touchInput } from '../core/events'
+import { IDLE_VERB, verbFor } from '../systems/verbs'
 
 export function initTouch(root: HTMLElement): void {
   const wrap = document.createElement('div')
@@ -6,8 +7,8 @@ export function initTouch(root: HTMLElement): void {
   wrap.innerHTML = `
     <div class="joy"><div class="joy-base"><div class="joy-thumb"></div></div></div>
     <div class="tbuttons">
-      <button class="tb tb-b" aria-label="Hop">B</button>
-      <button class="tb tb-a" aria-label="Interact">A</button>
+      <button class="tb tb-b" aria-label="Jump"><span class="tb-icon" aria-hidden="true">⤒</span><span class="tb-verb">JUMP</span></button>
+      <button class="tb tb-a idle" aria-label="Swing the wrench"><span class="tb-verb">SWING</span></button>
     </div>
     <button class="tb tb-menu" aria-label="Menu">≡</button>`
   root.appendChild(wrap)
@@ -70,6 +71,17 @@ export function initTouch(root: HTMLElement): void {
     events.emit('world:action', { action: 'jump' })
   })
   m.addEventListener('click', () => events.emit('world:action', { action: 'menu' }))
+
+  // The action button names what it will do. `ui:prompt` fires whenever what is
+  // in reach changes — the same event the desktop prompt chip listens to — so
+  // the label, the screen-reader name and the nudge all move together.
+  const aVerb = a.querySelector('.tb-verb') as HTMLElement
+  events.on('ui:prompt', ({ text, verb }) => {
+    const idle = !text
+    aVerb.textContent = idle ? IDLE_VERB : verb ?? verbFor({ prompt: text })
+    a.setAttribute('aria-label', idle ? 'Swing the wrench' : text)
+    a.classList.toggle('idle', idle)
+  })
 
   const wantTouch = () => window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0
   let forced: 'auto' | 'on' | 'off' = 'auto'

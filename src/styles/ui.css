@@ -855,27 +855,51 @@ button {
   align-items: flex-end;
 }
 .tb {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 74px;
+  min-height: 74px;
+  padding: 0 0.5rem;
+  border-radius: 999px;
   border: 1px solid var(--glass-border);
   font-family: var(--font-accent);
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   color: var(--on-accent);
   box-shadow: var(--shadow-sm);
   pointer-events: auto;
   touch-action: manipulation;
-  transition: transform var(--t-fast) var(--ease);
+  transition: transform var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease);
+}
+.tb-verb {
+  line-height: 1;
+}
+.tb-icon {
+  font-size: 1rem;
+  line-height: 1;
 }
 .tb-a {
   background: var(--accent);
-  width: 74px;
-  height: 74px;
+  min-width: 86px;
+  min-height: 86px;
+  font-size: 0.86rem;
+}
+/* Nothing in reach: the button still swings the wrench, so it stays usable —
+   just quiet, so the lit state means "there is something here". */
+.tb-a.idle {
+  opacity: 0.55;
+  background: rgba(16, 22, 34, 0.72);
+  color: var(--ink);
 }
 .tb-b {
   background: rgba(125, 211, 252, 0.9);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  min-width: 64px;
+  min-height: 64px;
 }
 .tb-menu {
   position: absolute;
