@@ -639,6 +639,15 @@ body.cutscene #ui .dlg.top {
   font-size: 0.75rem;
   animation: keybob 1.1s ease-in-out infinite;
 }
+/* `.nudge` (ui.css) also sets `position`, at the same specificity — without
+   this, which one wins depends on import order alone (ui.css happens to load
+   before this file today) rather than on anything meaningful, and the arrow
+   would silently lose its absolute placement if that order ever changed. The
+   extra class pins `position: absolute` regardless of order; `right`/`bottom`
+   above are untouched by `.nudge` either way. */
+.dlg-next.nudge {
+  position: absolute;
+}
 .dlg-choices {
   list-style: none;
   margin: 0.6rem 0 0;

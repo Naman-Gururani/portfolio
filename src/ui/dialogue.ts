@@ -329,6 +329,7 @@ function finish(): void {
   if (!s) return
   window.clearInterval(s.timer)
   current = null
+  next.classList.remove('nudge')
   s.unsub()
   const r = root!
   r.classList.add('out')
