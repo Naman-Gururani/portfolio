@@ -1836,14 +1836,16 @@ details > summary::-webkit-details-marker {
   }
 }
 
+/* `translate`, not `transform`: a fill-mode animation on transform would
+   freeze it and kill the hover lifts below */
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    translate: 0 18px;
   }
   to {
     opacity: 1;
-    transform: none;
+    translate: none;
   }
 }
 
@@ -2081,8 +2083,12 @@ details > summary::-webkit-details-marker {
     word-break: break-all;
   }
 
-  .arrow::after {
+  .arrow[href^='http']::after {
     content: ' (' attr(href) ')';
+  }
+
+  .arrow:not([href^='http'])::after {
+    content: none;
   }
 
   .btn {
@@ -2506,4 +2512,267 @@ details > summary::-webkit-details-marker {
 .sec-head h2,
 .card h3 {
   text-wrap: balance;
+}
+
+/* the credential's face is dark in both skins, so its focus ring is always light */
+.cred :focus-visible {
+  outline-color: #e5c5ff;
+}
+
+/* paper: a compact CV — the facts, not the brochure */
+@media print {
+  details::details-content {
+    content-visibility: visible;
+    display: block;
+  }
+
+  .about,
+  .card .chips,
+  .win .chips,
+  .metric-basis,
+  .act-detail,
+  .card-role .label,
+  .cred-kicker,
+  .cred-top,
+  .eyebrow,
+  .more > summary,
+  .how > summary,
+  .sec-rule,
+  .sec-no,
+  .foot {
+    display: none !important;
+  }
+
+  body {
+    font-size: 9.5pt;
+    line-height: 1.38;
+  }
+
+  .sec {
+    padding-top: 10pt;
+  }
+
+  .sec-head {
+    margin-bottom: 4pt;
+  }
+
+  .sec-head h2 {
+    font-size: 12.5pt;
+    border-bottom: 1px solid #999;
+    padding-bottom: 2pt;
+    width: 100%;
+  }
+
+  .cred h1 {
+    font-size: 20pt;
+  }
+
+  .cred-role {
+    font-size: 11pt;
+    margin-top: 2pt;
+  }
+
+  .cred-facts {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4pt;
+    margin-top: 6pt;
+  }
+
+  .cred-facts div,
+  .edu-facts div {
+    padding: 3pt 5pt;
+  }
+
+  .cred-actions {
+    margin-top: 6pt;
+  }
+
+  .headline {
+    font-size: 11pt;
+    margin-top: 6pt;
+  }
+
+  .lede {
+    margin-top: 3pt;
+    font-size: 9.5pt;
+  }
+
+  .hero-copy {
+    margin-top: 4pt;
+  }
+
+  .job-head,
+  .edu h3 {
+    margin-bottom: 4pt;
+  }
+
+  .job-head h3,
+  .edu h3,
+  .card h3,
+  .card.lg h3 {
+    font-size: 11pt;
+  }
+
+  .timeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2pt 16pt;
+    padding-left: 0;
+    margin-bottom: 4pt;
+  }
+
+  .timeline::before,
+  .node {
+    display: none;
+  }
+
+  .role {
+    padding-bottom: 0;
+  }
+
+  .role-title {
+    font-size: 9.5pt;
+  }
+
+  .role-note,
+  .badge {
+    display: none;
+  }
+
+  .win {
+    grid-template-columns: 1fr;
+    padding: 2pt 0;
+    border: 0;
+  }
+
+  .win-no {
+    display: none;
+  }
+
+  .how,
+  .more {
+    margin: 0;
+    border: 0;
+    background: none;
+  }
+
+  .how ul {
+    padding: 0 0 0 12pt;
+  }
+
+  .how li {
+    padding: 0 0 0 10pt;
+    font-size: 9pt;
+  }
+
+  .how li::before {
+    top: 5pt;
+    width: 4pt;
+    height: 4pt;
+  }
+
+  .card {
+    gap: 2pt;
+    margin-bottom: 5pt;
+  }
+
+  .card-kicker {
+    font-size: 7.5pt;
+  }
+
+  .card-summary,
+  .card.lg .card-summary,
+  .card-role,
+  .card-points li {
+    font-size: 9pt;
+  }
+
+  .card-points li {
+    padding: 0 0 0 10pt;
+  }
+
+  .card-points li::before {
+    top: 6pt;
+    width: 5pt;
+  }
+
+  .edu-facts {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4pt;
+    margin-top: 4pt;
+  }
+
+  .edu-facts dd.big {
+    font-size: 13pt;
+  }
+
+  .acts {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 3pt 10pt;
+  }
+
+  .act-when {
+    margin-top: 0;
+  }
+
+  .skills > div {
+    grid-template-columns: 90pt 1fr;
+    padding: 1pt 0;
+    border: 0;
+  }
+
+  .chip {
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 8.5pt;
+  }
+
+  .chip:not(:last-child)::after {
+    content: ' ·';
+  }
+
+  .contact-line {
+    display: none;
+  }
+
+  .contact-mail a {
+    font-size: 11pt;
+  }
+
+  .contact-links,
+  .contact-mail {
+    margin-top: 2pt;
+  }
+
+  .post {
+    padding: 0;
+  }
+
+  .paper-title {
+    font-size: 10.5pt;
+  }
+}
+
+@media print {
+  /* big panels may split across pages; only small items stay whole */
+  article.job,
+  article.card.lg,
+  article.edu {
+    break-inside: auto;
+  }
+
+  .glass,
+  .card,
+  .act,
+  .post,
+  .metric {
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .btn.primary {
+    display: none;
+  }
 }

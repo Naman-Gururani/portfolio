@@ -49,7 +49,7 @@ describe('resume.css', () => {
   it('only blurs behind glass where the browser supports it', () => {
     for (const b of BLOCKS) {
       if (b.prelude.startsWith('@supports')) continue
-      expect(b.body, `backdrop-filter under "${b.prelude.slice(0, 60)}"`).not.toMatch(/backdrop-filter/)
+      expect(b.body, `backdrop-filter under "${b.prelude.slice(0, 60)}"`).not.toMatch(/backdrop-filter:(?!\s*none)/)
     }
   })
 
@@ -62,5 +62,23 @@ describe('resume.css', () => {
   it('has a light skin and a forced-colours fallback', () => {
     expect(CSS).toMatch(/\[data-theme=['"]?light['"]?\]/)
     expect(CSS).toMatch(/@media \(forced-colors: active\)/)
+  })
+})
+
+describe('review fixes (v6 final review)', () => {
+  it('reveals with `translate`, so hover lifts (which use transform) still work', () => {
+    const rise = CSS.match(/@keyframes rise\s*\{([\s\S]*?)\n\}/)?.[1] ?? ''
+    expect(rise).toMatch(/translate:/)
+    expect(rise).not.toMatch(/transform:/)
+  })
+
+  it('opens collapsed details on paper even without JS, and prints only absolute URLs', () => {
+    const prints = BLOCKS.filter((b) => b.prelude.startsWith('@media print')).map((b) => b.body).join('\n')
+    expect(prints).toMatch(/::details-content/)
+    expect(prints).not.toMatch(/\.arrow::after\s*\{\s*content:\s*' \(' attr\(href\)/)
+  })
+
+  it('keeps a visible focus ring on the dark credential in both skins', () => {
+    expect(CSS).toMatch(/\.cred :focus-visible\s*\{[^}]*outline-color:\s*#e5c5ff/)
   })
 })

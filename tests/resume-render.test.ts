@@ -87,3 +87,18 @@ describe('renderHead', () => {
     expect(ld.mainEntity.sameAs).toContain(PERSON.github)
   })
 })
+
+describe('review fixes (v6 final review)', () => {
+  it('shows the certified rank and plain dates on the credential', () => {
+    const facts = doc.querySelector('.cred-facts')?.textContent ?? ''
+    expect(facts).toContain('Top 5% of rank holders')
+    expect(facts).toContain('since Aug 2024')
+    expect(facts).not.toMatch(/BA4/)
+  })
+
+  it('describes the ticket picture as it is', () => {
+    const alt = doc.querySelector('.ticket img')?.getAttribute('alt') ?? ''
+    expect(alt).toMatch(/fountain/i)
+    expect(alt).not.toMatch(/Ferris|rollercoaster/i)
+  })
+})

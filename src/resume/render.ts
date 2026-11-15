@@ -96,9 +96,9 @@ function hero(): string {
 <h1>${esc(PERSON.name)}</h1>
 <p class="cred-role">${esc(PERSON.title)}<span class="cred-at"> · ${esc(PERSON.employer)} · ${esc(PERSON.location)}</span></p>
 <dl class="cred-facts">
-<div><dt>Now</dt><dd>${esc(now.grade ?? '')} · promoted ${esc(fmtDate(now.from))}</dd></div>
+<div><dt>Engineer</dt><dd>since ${esc(fmtDate(EXPERIENCE.roles[1].from))} · promoted ${esc(fmtDate(now.from))}</dd></div>
 <div><dt>Degree</dt><dd>B.Tech CSE · <span class="nw">${esc(EDUCATION.cgpa)}</span></dd></div>
-<div><dt>Rank</dt><dd>Top 5% of batch</dd></div>
+<div><dt>Rank</dt><dd>Top 5% of rank holders</dd></div>
 <div><dt>Building</dt><dd>Enlacey · Google Play</dd></div>
 </dl>
 <div class="cred-actions">
@@ -207,7 +207,7 @@ function ticket(): string {
 <span class="ticket-copy">A Wordle ticket at the gate, my career as a rollercoaster, projects out of a claw machine, and a skip button in every game. Works on phones.</span>
 <span class="ticket-go">Enter the fair <span aria-hidden="true">▶</span></span>
 </span>
-<span class="ticket-shot"><img src="/portfolio/resume/fair.webp" width="480" height="300" loading="lazy" decoding="async" alt="The fairground in the game: a ticket booth, a rollercoaster and a Ferris wheel."></span>
+<span class="ticket-shot"><img src="/portfolio/resume/fair.webp" width="480" height="300" loading="lazy" decoding="async" alt="The entrance plaza of the game’s pixel-art fairground: a fountain, the Word Forge stall, snack stands, bunting and the Naman’s World Fair gate."></span>
 </a>
 </section>`
 }

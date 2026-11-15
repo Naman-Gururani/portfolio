@@ -46,7 +46,7 @@ export const PERSON = {
   blog: 'https://naman-gururani.github.io/blog/',
   headline: ['I build the real-time systems', 'that make payment data', 'trustworthy.'],
   summary:
-    'Real-time payment data at Barclays, in Java, Kafka and Flink. B.Tech CSE with a CGPA of 9.63 / 10, top 5% of my batch. Co-author of a paper on AI-assisted healthcare. Founder of Enlacey, live on Google Play.',
+    'Real-time payment data at Barclays, in Java, Kafka and Flink. B.Tech CSE with a CGPA of 9.63 / 10, among the top 5% of rank holders in my batch. Co-author of a paper on AI-assisted healthcare. Founder of Enlacey, live on Google Play.',
   about: [
     'I work at the layer where money becomes data: real-time streams from payment systems, turned into records a bank can trust.',
     'Since joining Barclays as an intern in 2023, I have gone from writing my team’s first streaming services to owning its payment lineage engine end to end.',
@@ -86,7 +86,7 @@ export const EXPERIENCE: { employer: string; place: string; roles: Role[]; bulle
   employer: 'Barclays',
   place: 'India',
   roles: [
-    { title: 'Data and Backend Engineer', grade: 'BA4', from: '2025', to: null, note: 'Promoted a grade after a year' },
+    { title: 'Data and Backend Engineer', grade: 'BA4', from: '2025', to: null, note: 'Promoted from BA3 to BA4' },
     { title: 'Data and Backend Engineer', grade: 'BA3', from: '2024-08', to: '2025', note: 'Full time, after the internship' },
     { title: 'DevOps Intern', from: '2023-06', to: '2023-08', note: 'Converted to a full-time offer' },
   ],
@@ -97,8 +97,8 @@ export const EXPERIENCE: { employer: string; place: string; roles: Role[]; bulle
       how: [
         'Union-find groups related events, so chains that looked unrelated can be merged while new events keep arriving.',
         'Lua scripts update live state in Redis atomically; distributed locks guard every merge.',
-        'Events can arrive days late, after the in-memory store has expired them, so a second tier on DynamoDB holds them — most events never touch it.',
-        'Designed for hundreds of millions of events a day; I taught myself Redis and DynamoDB for it.',
+        'A second tier on DynamoDB backs the live state held in Redis.',
+        'Designed for hundreds of millions of events a day.',
       ],
       tags: ['Flink', 'Kafka', 'Redis', 'DynamoDB'],
     },
@@ -108,22 +108,22 @@ export const EXPERIENCE: { employer: string; place: string; roles: Role[]; bulle
       tags: ['Java', 'Spring Boot', 'Kafka Streams', 'Flink'],
     },
     {
-      lead: 'Built a connector another team made their standard.',
-      text: 'It brings ISO 20022 payment messages from IBM MQ into Kafka; the framework team used it as the base for their generic version, and I ran the sessions that helped another team adopt it.',
+      lead: 'Built a connector the framework team reused.',
+      text: 'It brings ISO 20022 payment messages from IBM MQ into Kafka. The framework team reused it as the base for its generic version.',
       tags: ['IBM MQ', 'Kafka', 'ISO 20022'],
     },
     {
       lead: 'Protected customer data in UK payment flows.',
-      text: 'My first major delivery was critical-priority work tokenising sensitive customer data, carried from design to handover. I then built the jurisdiction controls that decide where payment data may be processed.',
+      text: 'I built the tokenisation of sensitive customer data in UK payment flows, and the jurisdiction controls that decide where payment data may be processed.',
     },
     {
       lead: 'Made the platform easier to run, without being asked.',
-      text: 'I set up dashboards and alerts on ELK and Snowflake that flag a service going down or overusing resources, and wrote the 60-step start-of-day checklist and the alert runbooks our support teams follow.',
+      text: 'I set up dashboards and alerts on ELK and Snowflake that flag a service going down or overusing resources, and wrote a 60-step start-of-day checklist and the alert runbooks.',
       tags: ['ELK', 'Snowflake'],
     },
     {
       lead: 'Taught the stack while learning it.',
-      text: 'The Java streaming stack was new to the whole team. I helped teammates learn it and ran sessions on Java and the stack for colleagues moving across from the legacy platform. When the lineage engine outgrew one person, I split the remaining work into tasks and coordinated the teammates who took them.',
+      text: 'The Java streaming stack was new to the whole team. I helped teammates learn it and ran sessions on Java and the stack for colleagues moving across from the legacy platform.',
     },
     {
       lead: 'Hackathon: loan rollovers, automated in 24 hours.',
@@ -245,7 +245,7 @@ export const ACTIVITIES: Activity[] = [
   {
     what: 'Class representative',
     where: 'B.Tech CSE, SRM IST',
-    when: '2020–2024',
+    when: 'B.Tech',
     detail: 'Coordinated between my section and the faculty.',
   },
   {

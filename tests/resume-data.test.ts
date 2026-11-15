@@ -64,3 +64,17 @@ describe('the résumé record', () => {
     expect(e.links.some((l) => l.href.includes('play.google.com/store/apps/details?id=com.enlacey.app'))).toBe(true)
   })
 })
+
+describe('review fixes (v6 final review)', () => {
+  it('words the rank as certified everywhere, including the summary', () => {
+    expect(R.PERSON.summary).toMatch(/top 5% of rank holders/i)
+    expect(ALL).not.toMatch(/top 5% of (my )?batch/i)
+  })
+
+  it('claims only what the fact sheet supports', () => {
+    for (const p of [/made their standard/i, /taught myself/i, /after a year/i, /days late/i, /first major delivery/i, /support teams follow/i, /coordinated the teammates/i])
+      expect(ALL).not.toMatch(p)
+    const rep = R.ACTIVITIES.find((a) => a.what === 'Class representative')!
+    expect(rep.when).not.toMatch(/\d/)
+  })
+})
