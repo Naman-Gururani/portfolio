@@ -115,6 +115,7 @@ ${link(PERSON.linkedin, 'LinkedIn', 'btn')}
 <div class="hero-copy">
 <p class="eyebrow">résumé · updated ${esc(UPDATED)}</p>
 <p class="headline">${PERSON.headline.map((l, i, a) => (i === a.length - 1 ? `<span class="holo-word">${esc(l)}</span>` : `<span>${esc(l)}</span> `)).join('')}</p>
+<p class="open"><span class="dot" aria-hidden="true"></span><b>Open to new roles</b><span class="open-list"> · ${PERSON.openTo.map(esc).join(' · ')}</span></p>
 <p class="lede">${esc(PERSON.summary)}</p>
 ${PERSON.about.map((p) => `<p class="about">${esc(p)}</p>`).join('\n')}
 <div class="interests"><span class="label">Interests</span>${chips(PERSON.interests)}</div>
@@ -285,7 +286,7 @@ function contact(): string {
     '08',
     'Contact',
     `<div class="contact glass">
-<p class="contact-line">Streams, lineage, marketplaces, or this page: I am happy to talk about any of it.</p>
+<p class="contact-line">Looking for a backend, data or Java engineer? I am open to new roles, and happy to talk about streams, lineage or marketplaces.</p>
 <p class="contact-mail"><a href="mailto:${esc(PERSON.email)}">${esc(PERSON.email)}</a></p>
 <p class="contact-links">${link(PERSON.github, 'GitHub', 'arrow')}${link(PERSON.linkedin, 'LinkedIn', 'arrow')}${link(PERSON.blog, 'Blog', 'arrow')}${link(PERSON.site, 'Homepage', 'arrow')}</p>
 </div>`,

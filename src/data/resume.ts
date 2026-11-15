@@ -52,6 +52,7 @@ export const PERSON = {
     'Since joining Barclays as an intern in 2023, I have gone from writing my team’s first streaming services to owning its payment lineage engine end to end.',
     'Outside work I build Enlacey, a local-services marketplace now live on Google Play, and I write about the systems I build.',
   ],
+  openTo: ['Backend', 'Data', 'Java', 'Full-stack', 'Spec-driven development'],
   interests: ['Stream processing', 'Data lineage and correctness', 'Distributed systems', 'Two-sided marketplaces'],
 } as const
 

@@ -102,3 +102,10 @@ describe('review fixes (v6 final review)', () => {
     expect(alt).not.toMatch(/Ferris|rollercoaster/i)
   })
 })
+
+describe('open to roles (Naman, 2026-11-16)', () => {
+  it('says plainly, near the top and at the end, that Naman is open to new roles', () => {
+    expect(doc.querySelector('.hero .open')?.textContent).toMatch(/Open to new roles/)
+    expect(doc.querySelector('#contact')?.textContent).toMatch(/Looking for a backend, data or Java engineer\?/)
+  })
+})
