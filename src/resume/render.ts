@@ -91,13 +91,13 @@ function hero(): string {
 <div class="cred-foil" aria-hidden="true"></div>
 <div class="cred-glare" aria-hidden="true"></div>
 <div class="cred-body">
-<div class="cred-top"><span class="serial">PS-ID-0824</span><span class="live"><span class="dot" aria-hidden="true"></span>${esc(PERSON.employer)} · since 2023</span></div>
+<div class="cred-top"><span class="chipcard" aria-hidden="true"><i></i><i></i><i></i></span><span class="serial">PS-ID-0824</span><span class="live"><span class="dot" aria-hidden="true"></span>${esc(PERSON.employer)} · since 2023</span></div>
 <p class="cred-kicker">Payments · Streaming · Backend</p>
 <h1>${esc(PERSON.name)}</h1>
 <p class="cred-role">${esc(PERSON.title)}<span class="cred-at"> · ${esc(PERSON.employer)} · ${esc(PERSON.location)}</span></p>
 <dl class="cred-facts">
 <div><dt>Now</dt><dd>${esc(now.grade ?? '')} · promoted ${esc(fmtDate(now.from))}</dd></div>
-<div><dt>Degree</dt><dd>B.Tech CSE · ${esc(EDUCATION.cgpa)}</dd></div>
+<div><dt>Degree</dt><dd>B.Tech CSE · <span class="nw">${esc(EDUCATION.cgpa)}</span></dd></div>
 <div><dt>Rank</dt><dd>Top 5% of batch</dd></div>
 <div><dt>Building</dt><dd>Enlacey · Google Play</dd></div>
 </dl>
@@ -107,12 +107,14 @@ function hero(): string {
 ${link(PERSON.github, 'GitHub', 'btn')}
 ${link(PERSON.linkedin, 'LinkedIn', 'btn')}
 </div>
+<span class="seal" aria-hidden="true"><span>NG</span></span>
 <div class="cred-code" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 </div>
 </article>
 </div>
 <div class="hero-copy">
 <p class="eyebrow">résumé · updated ${esc(UPDATED)}</p>
+<p class="headline">${PERSON.headline.map((l, i, a) => (i === a.length - 1 ? `<span class="holo-word">${esc(l)}</span>` : `<span>${esc(l)}</span> `)).join('')}</p>
 <p class="lede">${esc(PERSON.summary)}</p>
 ${PERSON.about.map((p) => `<p class="about">${esc(p)}</p>`).join('\n')}
 <div class="interests"><span class="label">Interests</span>${chips(PERSON.interests)}</div>
@@ -301,7 +303,8 @@ function footer(): string {
 export function renderResume(): string {
   return [
     '<a class="skip" href="#main">Skip to content</a>',
-    '<div class="scene" aria-hidden="true"><div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div><div class="floor"></div><div class="dots"></div></div>',
+    '<div class="scene" aria-hidden="true"><div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div><div class="floor"></div><div class="dots"></div>' +
+      '<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="ring"><div class="ring-in"></div></div><div class="prism"></div></div>',
     ribbon(),
     bar(),
     '<main id="main">',

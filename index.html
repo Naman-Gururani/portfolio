@@ -8,6 +8,7 @@
         location.replace('/portfolio/play/' + location.search + location.hash);
     </script>
     <script>
+      document.documentElement.classList.add('js');
       try { if (localStorage.getItem('pf.theme') === 'light') document.documentElement.dataset.theme = 'light' } catch (e) {}
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />

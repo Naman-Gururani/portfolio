@@ -44,6 +44,7 @@ export const PERSON = {
   linkedinHandle: 'in/naman-gururani',
   site: 'https://naman-gururani.github.io/',
   blog: 'https://naman-gururani.github.io/blog/',
+  headline: ['I build the real-time systems', 'that make payment data', 'trustworthy.'],
   summary:
     'Real-time payment data at Barclays, in Java, Kafka and Flink. B.Tech CSE with a CGPA of 9.63 / 10, top 5% of my batch. Co-author of a paper on AI-assisted healthcare. Founder of Enlacey, live on Google Play.',
   about: [
