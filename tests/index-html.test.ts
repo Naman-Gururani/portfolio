@@ -23,7 +23,7 @@ const decode = (s: string): string =>
     .replace(/&#39;/g, "'")
     .replace(/&nbsp;/g, ' ')
 
-const HTML = decode(readFileSync(resolve(__dirname, '../index.html'), 'utf8'))
+const HTML = decode(readFileSync(resolve(__dirname, '../play/index.html'), 'utf8'))
 
 /**
  * Everything a zone card can put in front of a reader, as one string — the same
