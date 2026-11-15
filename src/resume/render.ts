@@ -328,7 +328,7 @@ export function renderResume(): string {
 export function renderHead(): string {
   const title = `${PERSON.name} — ${PERSON.title}`
   const desc = `${PERSON.name}: ${PERSON.title.toLowerCase()} at ${PERSON.employer}, building real-time payment data systems in Java, Kafka and Flink. B.Tech CSE, CGPA 9.63/10. Founder of Enlacey.`
-  const img = `${SITE}og.png`
+  const img = `${SITE}og.jpg`
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',

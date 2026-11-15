@@ -72,7 +72,7 @@ describe('renderHead', () => {
   it('carries a canonical URL and link-preview tags', () => {
     expect(doc.querySelector('link[rel=canonical]')?.getAttribute('href')).toBe('https://naman-gururani.github.io/portfolio/')
     const og = (p: string) => doc.querySelector(`meta[property="${p}"]`)?.getAttribute('content')
-    expect(og('og:image')).toBe('https://naman-gururani.github.io/portfolio/og.png')
+    expect(og('og:image')).toBe('https://naman-gururani.github.io/portfolio/og.jpg')
     expect(og('og:title')).toContain(PERSON.name)
     expect(doc.querySelector('meta[name="twitter:card"]')?.getAttribute('content')).toBe('summary_large_image')
     expect(doc.querySelector('meta[name=description]')?.getAttribute('content')?.length).toBeGreaterThan(60)

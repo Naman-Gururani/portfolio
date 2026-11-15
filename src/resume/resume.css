@@ -2494,3 +2494,10 @@ details > summary::-webkit-details-marker {
     padding-right: 52px;
   }
 }
+
+/* keep the big sphere in the page margin, clear of the headline */
+@media (min-width: 901px) {
+  .o1 {
+    right: min(-150px, calc((100vw - var(--wrap)) / 2 - 350px));
+  }
+}
