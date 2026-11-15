@@ -1,5 +1,7 @@
 # Game Guidance (phones) Implementation Plan
 
+> **Status (2026-09-25):** all ten tasks executed 2026-09-23, reviewed, merged to `main` and published. The final fix wave added HUD wrapping at 720px and a deferred touch hint beyond this plan's text. Every deviation from it, and why, is in `docs/superpowers/2026-09-23-rulings.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make Naman's World Fair legible on a phone — action buttons that name what they do, a blink on anything that wants a tap, a Missions sheet that explains all eight stops, and a "Take me there" walk that only runs when asked — and move the game from `/lineage/` to `/portfolio/`.

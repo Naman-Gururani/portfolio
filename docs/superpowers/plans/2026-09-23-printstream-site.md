@@ -1,5 +1,7 @@
 # Printstream Site Implementation Plan
 
+> **Status (2026-09-25):** all six tasks executed 2026-09-23 plus a whole-branch fix wave (404 centring, sticky footer, redrawn favicon, per-skin Shiki), merged to `main` and deployed. Every deviation from it, and why, is in `docs/superpowers/2026-09-23-rulings.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Restyle `naman-gururani.github.io` — homepage, blog index, blog post, 404 — in the Printstream look (matte black / pearl white, holographic accents, chamfered technical edges), point every link at `/portfolio/`, and leave a redirect behind at `/lineage/`.

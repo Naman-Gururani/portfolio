@@ -29,13 +29,15 @@ Naman Gururani's portfolio is a small open-world game. You arrive at the gate of
 - **Five games everyone already knows** — a real-format Wordle, a claw machine, a chalk flapper, a letter-wheel word game and a disappearing-floor party game. Lose one and you'll meet the fair's hiring policy: **🤝 Hire me — extra life**. Every one of them also has a **"show me the answers"** button, because a résumé you have to be good at Wordle to read is not a résumé.
 - **Progression** — XP and levels, 20 lost tickets, prize boxes, stray balloons, tall grass to cut, a journal of quests, achievements and stats, a wardrobe of unlockable hats, and a 100 % celebration over the midway.
 - **Real game furniture** — title screen, arrival, location banners, a full map with fast travel to anywhere you've found, a minimap, pause menu, autosave (Continue where you left off).
+- **Guidance for when you're lost** — a **Missions** sheet lists all eight stops with what you do there, what you get, and whether it's done; its **Take me there** button walks you to the door, with an arrow and a trail, and any input hands control straight back. Without a ticket it walks you to Bo at the gate instead. Whatever wants a press next — the action button, a ride card's Next, the dialogue arrow — pulses until you press it.
 - **Generated everything** — every sprite, tile, booth, ride and villager is drawn in code (an ASCII/procedural pixel pipeline); all music, ambience and sound effects are synthesised with Web Audio. The repo ships **zero image or audio assets**.
 
 ## Controls
 
-- **Move** WASD / arrows — running is automatic (hold **Shift** to stroll) · on touch: joystick, **A** interact, **B** hop
+- **Move** WASD / arrows — running is automatic (hold **Shift** to stroll)
 - **Space** jump · **E** (or Enter) talk · read · play · ride — or swing the wrench (cut grass, bonk signs)
-- **M** map & fast travel · **J** journal · **Esc** pause
+- **M** map & fast travel · **J** journal · **Esc** pause · the HUD's **Missions** button lists every stop and can walk you there
+- **On touch:** drag the stick to move; the big button names what it will do (TALK, RIDE, PLAY, READ, SIGN… or SWING when nothing is in reach); **JUMP** hops
 
 ## Built for everyone
 

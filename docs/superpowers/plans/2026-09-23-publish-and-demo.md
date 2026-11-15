@@ -1,5 +1,7 @@
 # Publish & Demo Implementation Plan
 
+> **Status (2026-09-25):** executed 2026-09-23 in the order written. Two departures: the stats-card workflow was not dispatched by hand (a run without `METRICS_TOKEN` would have replaced the private-inclusive snapshot), and the videos were recorded with `scratch/demo/walkthrough.cjs` and `encode.cjs` instead of Task 6's `record.cjs`, using an `ffmpeg-static` binary because Playwright's cached ffmpeg is broken on this machine. Every deviation from it, and why, is in `docs/superpowers/2026-09-23-rulings.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans. This plan is a runbook — it changes the live site, so it runs in one sitting, in order, **only after the user's explicit go-ahead**. Steps use checkbox (`- [ ]`) syntax.
 
 **Goal:** Publish all three repositories, rename `lineage` → `portfolio` through the GitHub API, verify the live result, then record the walkthrough video.

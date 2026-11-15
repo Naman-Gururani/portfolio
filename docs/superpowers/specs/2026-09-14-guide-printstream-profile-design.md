@@ -1,5 +1,7 @@
 # Guide, Printstream & Profile — design (2026-09-14)
 
+> **Status (2026-09-25):** implemented across all three repositories and **published 2026-09-23** — game at naman-gururani.github.io/portfolio (repo renamed `lineage` to `portfolio`), Printstream homepage and blog live, GitHub profile rebuilt. Deliberate departures: the homepage hero kept the owner's "Naman's World" brand instead of §C2's role-line kicker; the profile's stats card dropped commits, stars and issues; §C1's white-on-black contrast-flip cards, 4px radius and link-hover holo underline became tonal cards, sharp corners and nav/button accents. Every deviation from it, and why, is in `docs/superpowers/2026-09-23-rulings.md`.
+
 One brief from the user, five deliverables across three repositories:
 
 | # | Deliverable | Repository (local clone) |

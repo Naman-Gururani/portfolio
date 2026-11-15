@@ -1,5 +1,7 @@
 # GitHub Profile Implementation Plan
 
+> **Status (2026-09-25):** all five tasks executed 2026-09-23 plus a final fix wave (CI runs the tests, Spark to Flink, overview rows reordered and trimmed), merged to `main` and pushed. The stats cards use `METRICS_TOKEN` when present; see HANDOFF checkpoint #9 and #10 for its state. Every deviation from it, and why, is in `docs/superpowers/2026-09-23-rulings.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace the small text-only profile README at `github.com/Naman-Gururani` with a Printstream-styled page: an animated banner, a generic pixel developer typing at a desk, four live stats cards drawn by the repo's own GitHub Action, the contribution snake, and a prominent link to the portfolio at its new `/portfolio/` address.
