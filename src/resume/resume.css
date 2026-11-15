@@ -2501,3 +2501,9 @@ details > summary::-webkit-details-marker {
     right: min(-150px, calc((100vw - var(--wrap)) / 2 - 350px));
   }
 }
+
+.ticket-title,
+.sec-head h2,
+.card h3 {
+  text-wrap: balance;
+}
