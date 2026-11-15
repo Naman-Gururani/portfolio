@@ -194,7 +194,8 @@ describe('prize shelf', () => {
       if (zone(id).content.title !== zone(id).short) expect(text(rowFor(id)), id).not.toContain(zone(id).content.title)
       expect(text(rowFor(id)), id).not.toContain(zone(id).content.sub ?? '~')
     }
-    expect(zone('stealth').short, 'the stealth product stays unnamed').toBe('???')
+    expect(zone('stealth').short, 'the Enlacey box stays a mystery until it is won').toBe('???')
+    expect(text(rowFor('stealth')), 'a locked row must not give the name away').not.toContain('Enlacey')
   })
 
   it('opens a prize card from its row', () => {

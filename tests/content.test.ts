@@ -1,10 +1,15 @@
-// content.ts is the single source of truth for every fact about Naman: the
-// panels, the reader, the journal and the dialogue all read from here. These
-// assertions pin the facts that are easy to drift (the CGPA, the degree years)
-// and the order the reader renders sections in.
+// content.ts is the single source of truth for every fact the game shows: the
+// panels, the reader, the journal and the dialogue all read from here. The
+// facts it shares with the résumé page (the name, the title, the dates, the
+// CGPA, the contact addresses) it takes from the master record,
+// `src/data/resume.ts`, so the two can never disagree. These assertions pin the
+// facts that are easy to drift and the order the reader renders sections in.
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { PROFILE, ZONES, type Zone } from '../src/data/content'
 import { NPC_TREES } from '../src/data/npcs'
+import { EDUCATION, EXPERIENCE, PERSON, PROJECTS } from '../src/data/resume'
 
 const zone = (id: string): Zone => {
   const z = ZONES.find((x) => x.id === id)
@@ -44,10 +49,63 @@ const allText = `${allCardText}\n${allDialogueText}`
 describe('profile', () => {
   it('names the person, the role and where they are', () => {
     expect(PROFILE.name).toBe('Naman Gururani')
-    expect(PROFILE.role).toBe('Software Development Engineer')
+    expect(PROFILE.role).toBe('Data and Backend Engineer')
     expect(PROFILE.company).toBe('Barclays')
     expect(PROFILE.location).toBe('India')
     expect(PROFILE.email).toBe('gururaninaman@gmail.com')
+  })
+})
+
+describe('the résumé record', () => {
+  const SRC = readFileSync(resolve(__dirname, '../src/data/content.ts'), 'utf8')
+
+  it('is where PROFILE comes from, field for field', () => {
+    expect(PROFILE).toEqual({
+      name: PERSON.name,
+      role: PERSON.title,
+      company: PERSON.employer,
+      location: PERSON.location,
+      email: PERSON.email,
+      github: PERSON.github,
+      githubHandle: PERSON.githubHandle,
+      linkedin: PERSON.linkedin,
+      linkedinHandle: PERSON.linkedinHandle,
+    })
+  })
+
+  it('is imported, not copied: content.ts writes none of the shared facts out itself', () => {
+    expect(SRC).toMatch(/from '\.\/resume'/)
+    // (Not the GitHub address: Safe Stride's repo link legitimately starts with it.)
+    for (const fact of [PERSON.name, PERSON.title, PERSON.email, PERSON.linkedin, EDUCATION.cgpa, 'August 2024', 'Aug 2024', 'BA3', 'BA4'])
+      expect(SRC, `content.ts spells out "${fact}" instead of reading it from resume.ts`).not.toContain(fact)
+  })
+
+  it('gives the cards the record’s CGPA, years and start date', () => {
+    expect(factOf(zone('about'), 'CGPA')).toBe(EDUCATION.cgpa)
+    expect(factOf(zone('education'), 'CGPA')).toBe(EDUCATION.cgpa)
+    expect(factOf(zone('education'), 'Years')).toBe(`${EDUCATION.from} – ${EDUCATION.to}`)
+    expect(factOf(zone('about'), 'Since')).toBe('August 2024')
+    expect(EXPERIENCE.roles[1].from).toBe('2024-08')
+  })
+
+  it('carries the new title everywhere, and the old one nowhere', () => {
+    expect(PERSON.title).toBe('Data and Backend Engineer')
+    expect(zone('about').content.sub).toBe('Data and Backend Engineer · Barclays')
+    expect(factOf(zone('about'), 'Now')).toBe('Data and Backend Engineer · Barclays')
+    expect((zone('experience').content.body ?? [])[0]).toBe('⭐ Data and Backend Engineer · Barclays · Aug 2024 — now')
+    expect((zone('experience').content.body ?? [])[2]).toBe('🛠️ DevOps Intern · Barclays · Jun — Aug 2023')
+    expect(allText).not.toMatch(/Software Development Engineer|\bSDE\b/)
+  })
+
+  it('shows the promotion on the Experience card, from the record’s roles', () => {
+    expect(factOf(zone('experience'), 'Promoted')).toBe('BA3 → BA4 in 2025')
+    expect(EXPERIENCE.roles.map((r) => r.grade)).toEqual(['BA4', 'BA3', undefined])
+  })
+
+  it('gives scale as an order of magnitude, never an exact volume', () => {
+    expect(allText).not.toMatch(/750/)
+    expect((zone('experience').content.body ?? [])[1]).toContain('hundreds of millions of records a day')
+    expect((zone('lineage').content.body ?? [])[0]).toContain('hundreds of millions of records a day')
   })
 })
 
@@ -124,10 +182,24 @@ describe('every zone', () => {
     }
   })
 
-  it('leaves the in-development product unnamed', () => {
+  it('names Enlacey, live on Google Play', () => {
     const vault = zone('stealth')
-    expect(vault.content.title).toBe('A consumer product, in development')
-    expect(vault.content.sub).toBe('Independent')
+    const enlacey = PROJECTS.find((p) => p.id === 'enlacey')!
+    expect(vault.content.kicker).toBe('PROJECT · LIVE')
+    expect(vault.content.title).toBe(enlacey.name)
+    expect(vault.content.title).toBe('Enlacey')
+    expect(vault.content.sub).toBe('Founder · live on Google Play')
+    // The card is the record's summary, shortened: every fact on it is one the
+    // record states too.
+    const body = (vault.content.body ?? []).join(' ')
+    for (const fact of ['India-first', 'local services', 'Haldwani', 'Google Play since October 2026', 'iPhone']) {
+      expect(body, `the Enlacey card no longer says "${fact}"`).toContain(fact)
+      expect(enlacey.summary, `resume.ts no longer says "${fact}"`).toContain(fact)
+    }
+    expect(vault.content.links).toEqual([
+      { label: 'Google Play', value: 'Enlacey on Google Play', href: 'https://play.google.com/store/apps/details?id=com.enlacey.app', ext: true },
+    ])
+    expect(enlacey.links.map((l) => l.href)).toContain(vault.content.links![0].href)
   })
 })
 
@@ -141,7 +213,7 @@ describe('the prize-shelf labels', () => {
     expect(Object.fromEntries(ZONES.filter((z) => z.short !== undefined).map((z) => [z.id, z.short]))).toEqual({
       lineage: 'Lineage Engine',
       safestride: 'Safe Stride',
-      stealth: '???', // the in-development product is a mystery box here too
+      stealth: '???', // Enlacey is named on its card; on the shelf it stays the mystery box
     })
   })
 })

@@ -68,7 +68,8 @@ describe('newClaw', () => {
 
   it('puts the three projects on the shelf with two plushies between them', () => {
     const s = newClaw()
-    // The mystery box is the stealth chapter and is never named here either.
+    // The mystery box is the stealth chapter (Enlacey): the shelf keeps it a
+    // mystery, and its card names it once it is won.
     expect(s.prizes.map((p) => [p.id, p.x, p.w, p.decoy])).toEqual([
       ['lineage', 0.22, 0.14, false],
       ['plush_a', 0.36, 0.08, true],

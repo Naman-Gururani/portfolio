@@ -58,14 +58,14 @@ const CORPUS = [...ZONES.map(textOf), ...Object.values(PROFILE)].join('\n')
  * A phrase goes in this list as the *shortest* form that is still a claim about
  * Naman: the page says "backend & streaming-data engineering" and the About card
  * says "backend & streaming-data engineer", so the shared stem is what is
- * pinned. Punctuation between two facts is the page's own business — "Software
- * Development Engineer at Barclays" is two entries, not one, because the card
+ * pinned. Punctuation between two facts is the page's own business — "Data and
+ * Backend Engineer at Barclays" is two entries, not one, because the card
  * joins them with a middot instead of "at".
  */
 const FACTS = [
   // who
   PROFILE.name,
-  'Software Development Engineer',
+  'Data and Backend Engineer',
   'Barclays',
   'backend & streaming-data engineer',
   // the stack the noscript block lists

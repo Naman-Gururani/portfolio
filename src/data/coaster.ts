@@ -276,7 +276,7 @@ const firstClause = (s: string): string => {
   const i = t.indexOf(' — ')
   return i < 0 ? t : t.slice(0, i)
 }
-/** The one sentence in `s` that carries `needle` (spec §4 asks for the ~750M one). */
+/** The one sentence in `s` that carries `needle` (spec §4 asks for the one with the scale). */
 const sentenceWith = (s: string, needle: string): string => sentences(s).find((v) => v.includes(needle)) ?? firstSentence(s)
 
 const ROLES = splitRoles(bodyOf('experience'))
@@ -284,8 +284,8 @@ const ROLES = splitRoles(bodyOf('experience'))
 /**
  * Five milestones in résumé order, each pinned to the piece of track that tells
  * it: the climb is the degree, the crest is the internship, the camelback is
- * the job, the loop's exit is the engine in production, the run home is what is
- * being built now.
+ * the job, the loop's exit is the engine in production, the run home is
+ * Enlacey, live.
  */
 function buildStops(): Stop[] {
   const marks: { where: Vec2; kicker: string; title: string; line: string }[] = [
@@ -319,7 +319,7 @@ function buildStops(): Stop[] {
       where: pt(1140, -104),
       kicker: kickerTail('lineage'),
       title: contentOf('lineage').title,
-      line: sentenceWith(bodyOf('lineage')[0], '750 million'),
+      line: sentenceWith(bodyOf('lineage')[0], 'records a day'),
     },
     {
       where: pt(1240, DECK), // the brake run, coming home
@@ -344,7 +344,8 @@ export const COASTER_STOPS: Stop[] = buildStops()
  * The card that opens when the ride parks: the whole career in one block. It is
  * assembled, never authored — both role paragraphs with their glyph-free
  * headlines, the degree line, the education facts plus the date the current job
- * started, and the experience chips as the stack.
+ * started and the experience facts (the promotion), and the experience chips as
+ * the stack.
  */
 export function careerCard(): Content {
   const exp = contentOf('experience')
@@ -354,7 +355,11 @@ export function careerCard(): Content {
     title: 'Career',
     sub: contentOf('about').sub,
     body: [ROLES.sde.head, ROLES.sde.text, ROLES.intern.head, ROLES.intern.text, edu.sub ?? ''].filter(Boolean),
-    facts: [...(edu.facts ?? []).map((f) => ({ ...f })), { k: 'Since', v: factOf('about', 'Since') }],
+    facts: [
+      ...(edu.facts ?? []).map((f) => ({ ...f })),
+      { k: 'Since', v: factOf('about', 'Since') },
+      ...(exp.facts ?? []).map((f) => ({ ...f })),
+    ],
     chips: [...(exp.chips ?? [])],
   }
 }

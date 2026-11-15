@@ -162,11 +162,11 @@ describe('coaster stops', () => {
     expect(s.line).toContain('Automated loading')
   })
 
-  it('3 · the SDE role, from the star paragraph', () => {
+  it('3 · the full-time role, from the star paragraph', () => {
     const s = at(2)
     const body = zone('experience').content.body ?? []
     expect(s.kicker).toBe('2024')
-    expect(s.title).toContain('Software Development Engineer')
+    expect(s.title).toContain('Data and Backend Engineer')
     expect(s.title).toContain('Barclays')
     expect(s.title).not.toMatch(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u)
     expect(body[0]).toContain(s.kicker)
@@ -183,21 +183,22 @@ describe('coaster stops', () => {
     expect(s.title).toBe(c.title)
     expect(s.title).toContain('Payment Lineage Engine')
     expect((c.body ?? [])[0]).toContain(s.line)
-    expect(s.line).toContain('750 million')
+    expect(s.line).toContain('hundreds of millions of records a day')
   })
 
-  it('5 · the product in the making, with nothing named that content does not name', () => {
+  it('5 · Enlacey, live, with nothing named that content does not name', () => {
     const s = at(4)
     const c = zone('stealth').content
-    expect(s.kicker).toBe('BUILDING')
+    expect(s.kicker).toBe('LIVE')
     expect(c.kicker).toContain(s.kicker)
     expect(s.title).toBe(c.title)
+    expect(s.title).toBe('Enlacey')
     expect((c.body ?? [])[0].startsWith(s.line)).toBe(true)
     expect(s.line).not.toMatch(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u)
   })
 
   it('rides the beats in résumé order, oldest first', () => {
-    expect(COASTER_STOPS.map((s) => s.kicker)).toEqual(['2020', '2023', '2024', 'IN PRODUCTION', 'BUILDING'])
+    expect(COASTER_STOPS.map((s) => s.kicker)).toEqual(['2020', '2023', '2024', 'IN PRODUCTION', 'LIVE'])
   })
 })
 
@@ -211,7 +212,7 @@ describe('careerCard()', () => {
 
   it('carries both role headlines, glyphs stripped', () => {
     const body = card.body ?? []
-    expect(body.some((p) => p.startsWith('Software Development Engineer · Barclays'))).toBe(true)
+    expect(body.some((p) => p.startsWith('Data and Backend Engineer · Barclays'))).toBe(true)
     expect(body.some((p) => p.startsWith('DevOps Intern · Barclays'))).toBe(true)
     for (const p of body) expect(p.startsWith('⭐') || p.startsWith('🛠'), `"${p.slice(0, 24)}" keeps a role glyph`).toBe(false)
   })
@@ -233,6 +234,12 @@ describe('careerCard()', () => {
     expect(cgpa?.v).toBe(factOf('education', 'CGPA'))
     expect(text).toContain('9.63')
     expect(facts.find((f) => f.k === 'Since')?.v).toBe(factOf('about', 'Since'))
+  })
+
+  it('shows the promotion, taken from the Experience card', () => {
+    const promoted = (card.facts ?? []).find((f) => f.k === 'Promoted')
+    expect(promoted?.v).toBe(factOf('experience', 'Promoted'))
+    expect(promoted?.v).toBe('BA3 → BA4 in 2025')
   })
 
   it('reuses the experience chips, not a new stack', () => {

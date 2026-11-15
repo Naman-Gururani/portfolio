@@ -40,8 +40,8 @@ export type ClawSession = MinigameSession & { __step(ms: number): void }
  * `content.ts`, so the prize you grab is already the colour of the card that
  * opens; the label is the chapter's `short`, the same field the Journal's prize
  * shelf reads, so the box and the row can never disagree about what is on the
- * shelf. The stealth product is a mystery box and stays one: `content.ts`
- * labels it `???` exactly as it is unnamed everywhere else.
+ * shelf. The stealth chapter (Enlacey) is the mystery box and stays one:
+ * `content.ts` labels it `???`, so the name is what the player wins.
  */
 const ICON: Record<string, string> = { lineage: '💳', safestride: '🚶', stealth: '🔒' }
 

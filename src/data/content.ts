@@ -1,20 +1,65 @@
 /* ============================================================
-   NAMAN'S WORLD — content & map layout (single source of truth)
+   NAMAN'S WORLD — content & map layout (single source of truth
+   for everything the game shows)
+   The facts the game shares with the résumé page — name, title,
+   employer, contact addresses, dates, CGPA, the promotion — are
+   read from the master record, `./resume.ts`, never written out
+   here, so the cards and the page can never disagree.
    Audit note: skill listings contain only the client-approved set;
-   the in-development product is intentionally abstract and never named.
+   bank detail is held to "option B" (scale as an order of
+   magnitude, no internal system names). Enlacey, the product that
+   used to sit here unnamed, is live and named on its card; on the
+   claw shelf its box is still the `???` mystery prize.
    ============================================================ */
 
-export const PROFILE = {
-  name: 'Naman Gururani',
-  role: 'Software Development Engineer',
-  company: 'Barclays',
-  location: 'India',
-  email: 'gururaninaman@gmail.com',
-  github: 'https://github.com/Naman-Gururani',
-  githubHandle: 'Naman-Gururani',
-  linkedin: 'https://www.linkedin.com/in/naman-gururani',
-  linkedinHandle: 'in/naman-gururani',
+import { EDUCATION, EXPERIENCE, PERSON, PROJECTS, type Role } from './resume'
+
+export const PROFILE: {
+  name: string
+  role: string
+  company: string
+  location: string
+  email: string
+  github: string
+  githubHandle: string
+  linkedin: string
+  linkedinHandle: string
+} = {
+  name: PERSON.name,
+  role: PERSON.title,
+  company: PERSON.employer,
+  location: PERSON.location,
+  email: PERSON.email,
+  github: PERSON.github,
+  githubHandle: PERSON.githubHandle,
+  linkedin: PERSON.linkedin,
+  linkedinHandle: PERSON.linkedinHandle,
 }
+
+/* ---------------- dates, as the cards print them ---------------- */
+
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+const yearOf = (d: string): string => d.slice(0, 4)
+/** '2023-06' → 'Jun' (or 'June' when `long`). */
+const monthOf = (d: string, long = false): string => {
+  const m = MONTHS[Number(d.slice(5, 7)) - 1] ?? ''
+  return long ? m : m.slice(0, 3)
+}
+/** '2023-06' → 'Jun 2023' (or 'June 2023'). */
+const monthYear = (d: string, long = false): string => `${monthOf(d, long)} ${yearOf(d)}`
+/** A role's span as a headline ends it: '<Mon YYYY> — now', or '<Mon> — <Mon YYYY>' inside one year. */
+const span = (r: Role): string => {
+  if (r.to === null) return `${monthYear(r.from)} — now`
+  return yearOf(r.from) === yearOf(r.to) ? `${monthOf(r.from)} — ${monthYear(r.to)}` : `${monthYear(r.from)} — ${monthYear(r.to)}`
+}
+
+// The record lists the roles newest first: the current grade, the first
+// full-time grade, then the internship.
+const [CURRENT, FULL_TIME, INTERN] = EXPERIENCE.roles
+const COMPANY = EXPERIENCE.employer
+const YEARS = `${EDUCATION.from} – ${EDUCATION.to}`
+const ENLACEY = PROJECTS.find((p) => p.id === 'enlacey')!
+const PLAY_STORE = ENLACEY.links.find((l) => l.label === 'Google Play')!.href
 
 export type Content = {
   kicker?: string
@@ -62,16 +107,16 @@ export const ZONES: Zone[] = [
     content: {
       kicker: 'WHO',
       title: 'Hi, I’m Naman 👋',
-      sub: 'Software Development Engineer · Barclays',
+      sub: `${PERSON.title} · ${COMPANY}`,
       body: [
         'I’m a backend & streaming-data engineer. I work at the layer where money becomes data — turning high-volume, real-time event streams into something you can trust.',
         'I like the unglamorous backbone: the pipelines, the guarantees, the lineage that lets a single number be believed at scale.',
       ],
       facts: [
-        { k: 'Now', v: 'SDE · Barclays' },
-        { k: 'Since', v: 'August 2024' },
-        { k: 'Education', v: 'B.Tech CSE · SRM IST (2020–2024)' },
-        { k: 'CGPA', v: '9.63 / 10' },
+        { k: 'Now', v: `${PERSON.title} · ${COMPANY}` },
+        { k: 'Since', v: monthYear(FULL_TIME.from, true) },
+        { k: 'Education', v: `B.Tech CSE · SRM IST (${EDUCATION.from}–${EDUCATION.to})` },
+        { k: 'CGPA', v: EDUCATION.cgpa },
       ],
     },
   },
@@ -87,11 +132,14 @@ export const ZONES: Zone[] = [
       title: 'Experience',
       groups: [],
       body: [
-        '⭐ Software Development Engineer · Barclays · Aug 2024 — now',
-        'I consume real-time streams from Apache Kafka and IBM MQ and turn raw events into something trustworthy — tokenized, classified by jurisdiction, mapped to canonical codes. I built a real-time payment lineage engine that reconstructs the full path of every payment across highly decoupled systems (each hop guarantees exactly one upstream and one downstream), running at ~750M records a day. I work spec-first, with AI spec-driven development.',
-        '🛠️ DevOps Intern · Barclays · Jun — Aug 2023',
+        // One headline for both grades: the title has run unbroken from the first
+        // full-time grade to the current one (the promotion is the fact below).
+        `⭐ ${PERSON.title} · ${COMPANY} · ${span({ ...FULL_TIME, to: CURRENT.to })}`,
+        'I consume real-time streams from Apache Kafka and IBM MQ and turn raw events into something trustworthy — tokenized, classified by jurisdiction, mapped to canonical codes. I built a real-time payment lineage engine that reconstructs the full path of every payment across highly decoupled systems (each hop guarantees exactly one upstream and one downstream), running at hundreds of millions of records a day. I work spec-first, with AI spec-driven development.',
+        `🛠️ ${INTERN.title} · ${COMPANY} · ${span(INTERN)}`,
         'Automated loading of process exceptions into an analyst portal via a secured (OAuth 2.0) REST API — collapsing an 8-hour delay into real time — aggregating Teradata data with Python and KornShell.',
       ],
+      facts: [{ k: 'Promoted', v: `${FULL_TIME.grade} → ${CURRENT.grade} in ${yearOf(CURRENT.from)}` }],
       chips: ['Apache Flink', 'Apache Kafka', 'Kafka Streams', 'Redis', 'DynamoDB', 'IBM MQ'],
     },
   },
@@ -105,11 +153,11 @@ export const ZONES: Zone[] = [
     content: {
       kicker: 'STUDY',
       title: 'SRM Institute of Science and Technology',
-      sub: 'B.Tech, Computer Science & Engineering · 2020 – 2024',
+      sub: `B.Tech, Computer Science & Engineering · ${YEARS}`,
       facts: [
         { k: 'Degree', v: 'B.Tech CSE' },
-        { k: 'Years', v: '2020 – 2024' },
-        { k: 'CGPA', v: '9.63 / 10' },
+        { k: 'Years', v: YEARS },
+        { k: 'CGPA', v: EDUCATION.cgpa },
       ],
       body: ['Where systems stopped being homework and started being fun.'],
     },
@@ -150,7 +198,7 @@ export const ZONES: Zone[] = [
       title: 'Real-time Payment Lineage Engine',
       sub: 'Barclays',
       body: [
-        'A backend engine that reconstructs the complete lineage of every payment — every system it touched, in order — across highly decoupled services. Each hop guarantees exactly one upstream and one downstream; the engine stitches those single links into an end-to-end path, continuously, at ~750 million records a day.',
+        'A backend engine that reconstructs the complete lineage of every payment — every system it touched, in order — across highly decoupled services. Each hop guarantees exactly one upstream and one downstream; the engine stitches those single links into an end-to-end path, continuously, at hundreds of millions of records a day.',
       ],
       chips: ['Apache Flink', 'Apache Kafka', 'Redis', 'DynamoDB'],
     },
@@ -159,17 +207,21 @@ export const ZONES: Zone[] = [
     id: 'stealth',
     name: 'Prize Tent',
     label: 'Project',
-    short: '???', // the product is unnamed here exactly as it is everywhere else
+    // Enlacey. The id stays 'stealth' (saves, the claw and the story key on it)
+    // and the box stays '???': on the shelf it is the mystery prize, and the
+    // name is what you win.
+    short: '???',
     tx: 41,
     ty: 12,
     accent: 0xb794f6,
     content: {
-      kicker: 'PROJECT · BUILDING',
-      title: 'A consumer product, in development',
-      sub: 'Independent',
+      kicker: 'PROJECT · LIVE',
+      title: ENLACEY.name,
+      sub: 'Founder · live on Google Play',
       body: [
-        'A product I’m designing and building outside of work — currently in active development, AI spec-driven from day one. Details under wraps for now. 🔒',
+        'An India-first marketplace for local services, launching in Haldwani. Live on Google Play since October 2026; coming soon to iPhone.',
       ],
+      links: [{ label: 'Google Play', value: `${ENLACEY.name} on Google Play`, href: PLAY_STORE, ext: true }],
     },
   },
   {
