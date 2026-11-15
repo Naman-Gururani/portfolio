@@ -3,9 +3,7 @@
 // no application talk, no bank-internal detail, no placeholders.
 import { describe, expect, it } from 'vitest'
 import * as R from '../src/data/resume'
-
-export const BANNED =
-  /IELTS|TOEFL|\bGRE\b|admission|applying|application|Cornell|Carnegie|Berkeley|Toronto|Waterloo|Georgia Tech|UIUC|open to work|seeking|hire me|prospective/i
+import { BANNED } from './helpers/banned'
 
 const ALL = JSON.stringify(R)
 

@@ -26,6 +26,8 @@
   "include": [
     "src",
     "tests",
-    "tools"
+    "tools",
+    "vite-plugin-resume.ts",
+    "vite.config.ts"
   ]
 }

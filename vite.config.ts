@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite'
+import { resumePlugin } from './vite-plugin-resume'
 
 // Served from https://naman-gururani.github.io/portfolio/
 //   /portfolio/       — the résumé (index.html)
 //   /portfolio/play/  — the game (play/index.html)
 export default defineConfig({
   base: '/portfolio/',
+  plugins: [resumePlugin()],
   build: {
     target: 'es2020',
     assetsInlineLimit: 4096,
