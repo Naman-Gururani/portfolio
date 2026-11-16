@@ -1,53 +1,284 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/portfolio/favicon.svg" />
+    <script data-forward>
+      var p = new URLSearchParams(location.search);
+      if (['fresh', 'cheat', 'word', 'duck', 'st'].some(function (f) { return p.has(f) }))
+        location.replace('/portfolio/play/' + location.search + location.hash);
+    </script>
+    <script>
+      document.documentElement.classList.add('js');
+      try { if (localStorage.getItem('pf.theme') === 'light') document.documentElement.dataset.theme = 'light' } catch (e) {}
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content="#080b12" />
-
-    <title>Naman's World Fair · an explorable portfolio</title>
-    <meta
-      name="description"
-      content="Naman Gururani's portfolio is a pixel-art open-world game. Explore Naman's World Fair — attractions, day and night, villagers, quests and collectibles — and discover the work of a real-time streaming-data engineer at Barclays."
-    />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0b0b0c" />
+    <link rel="icon" type="image/svg+xml" href="/portfolio/favicon.svg" />
+    <title>Naman Gururani — Data and Backend Engineer</title>
+    <meta name="description" content="Naman Gururani: data and backend engineer at Barclays, building real-time payment data systems in Java, Kafka and Flink. B.Tech CSE, CGPA 9.63/10. Founder of Enlacey." />
     <meta name="author" content="Naman Gururani" />
     <link rel="canonical" href="https://naman-gururani.github.io/portfolio/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Naman's World Fair" />
-    <meta property="og:description" content="A pixel-art open-world portfolio. Explore a fairground with day/night, villagers, quests and collectibles to discover Naman Gururani's experience, skills and projects." />
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content="Naman Gururani — Data and Backend Engineer" />
+    <meta property="og:description" content="Naman Gururani: data and backend engineer at Barclays, building real-time payment data systems in Java, Kafka and Flink. B.Tech CSE, CGPA 9.63/10. Founder of Enlacey." />
     <meta property="og:url" content="https://naman-gururani.github.io/portfolio/" />
+    <meta property="og:image" content="https://naman-gururani.github.io/portfolio/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Naman Gururani, Data and Backend Engineer — résumé" />
+    <meta property="profile:first_name" content="Naman" />
+    <meta property="profile:last_name" content="Gururani" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Naman's World Fair" />
-    <meta name="twitter:description" content="A pixel-art open-world portfolio game by Naman Gururani." />
-    <style>
-      /* Pre-boot paint: the same ground and rhythm ui.css takes over with. */
-      #loading { position: fixed; inset: 0; z-index: 50; display: grid; place-content: center; justify-items: center; gap: .9rem;
-        background: radial-gradient(130% 90% at 50% 0%, #17203a 0%, #080b12 62%); font-family: system-ui, sans-serif; color: #eef3ff; }
-      .load-logo { margin: 0; font-size: 1.8rem; font-weight: 600; }
-      .load-kicker { margin: -.4rem 0 .6rem; font-size: .78rem; letter-spacing: .24em; text-transform: uppercase; color: #5eead4; }
-      .load-label { margin: 0; font-size: .85rem; color: #9fadc8; }
-    </style>
-    <script type="module" crossorigin src="/portfolio/assets/index-CEClF1RS.js"></script>
-    <link rel="modulepreload" crossorigin href="/portfolio/assets/phaser-0YPJO2g1.js">
-    <link rel="stylesheet" crossorigin href="/portfolio/assets/index-CVf9g1cP.css">
+    <meta name="twitter:title" content="Naman Gururani — Data and Backend Engineer" />
+    <meta name="twitter:description" content="Naman Gururani: data and backend engineer at Barclays, building real-time payment data systems in Java, Kafka and Flink. B.Tech CSE, CGPA 9.63/10. Founder of Enlacey." />
+    <meta name="twitter:image" content="https://naman-gururani.github.io/portfolio/og.jpg" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfilePage","url":"https://naman-gururani.github.io/portfolio/","dateModified":"2026-11-16","mainEntity":{"@type":"Person","name":"Naman Gururani","jobTitle":"Data and Backend Engineer","worksFor":{"@type":"Organization","name":"Barclays"},"alumniOf":{"@type":"CollegeOrUniversity","name":"SRM Institute of Science and Technology"},"email":"mailto:gururaninaman@gmail.com","url":"https://naman-gururani.github.io/portfolio/","sameAs":["https://github.com/Naman-Gururani","https://www.linkedin.com/in/naman-gururani","https://naman-gururani.github.io/","https://play.google.com/store/apps/details?id=com.enlacey.app"],"knowsAbout":["Apache Kafka","Apache Flink","Stream processing","Data lineage","Java","Distributed systems"]}}</script>
+    <script type="module" crossorigin src="/portfolio/assets/main-BGSyr-pm.js"></script>
+    <link rel="modulepreload" crossorigin href="/portfolio/assets/600-C5Lhd14J.js">
+    <link rel="stylesheet" crossorigin href="/portfolio/assets/600-ZQn4ZTzH.css">
+    <link rel="stylesheet" crossorigin href="/portfolio/assets/main-B4fsjfkh.css">
   </head>
   <body>
-    <div id="game-root" aria-hidden="true"></div>
-    <!-- tabindex: the fallback focus target when a card closes and whatever
-         opened it is gone — see `restoreFocus` in src/ui/modal.ts. -->
-    <div id="ui" tabindex="-1">
-      <div id="loading"><p class="load-logo">Naman Gururani</p><p class="load-kicker">Naman's World Fair</p><p class="load-label">loading…</p></div>
-    </div>
-    <noscript>
-      <div style="padding:2rem;color:#eee;font-family:sans-serif;max-width:60ch">
-        <h1>Naman Gururani</h1>
-        <p>Software Development Engineer at Barclays — backend &amp; streaming-data engineering (Apache Kafka, Apache Flink,
-        Kafka Streams, IBM MQ, Redis, DynamoDB). This portfolio is an interactive game and needs JavaScript; the same content is
-        available in Reader Mode once it loads.</p>
-        <p>Reach him at gururaninaman@gmail.com · github.com/Naman-Gururani · linkedin.com/in/naman-gururani</p>
-      </div>
-    </noscript>
+    <a class="skip" href="#main">Skip to content</a>
+<div class="scene" aria-hidden="true"><div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div><div class="floor"></div><div class="dots"></div><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="ring"><div class="ring-in"></div></div><div class="prism"></div></div>
+<a class="ribbon" href="/portfolio/play/">
+<span class="ribbon-stub" aria-hidden="true">ADMIT&nbsp;ONE</span>
+<span class="ribbon-text"><b>Prefer to explore?</b> <span class="ribbon-more">Play this résumé as a pixel-art fairground.</span></span>
+<span class="ribbon-go">Play <span aria-hidden="true">▶</span></span>
+</a>
+<header class="bar-wrap"><nav class="bar" aria-label="Sections">
+<a class="mark" href="#top" aria-label="Naman Gururani, back to top"><span aria-hidden="true">NG</span></a>
+<div class="bar-links"><a href="#experience">Experience</a><a href="#projects">Projects</a><a href="#education">Education</a><a href="#publication">Paper</a><a href="#leadership">Leadership</a><a href="#writing">Writing</a><a href="#contact">Contact</a></div>
+<div class="bar-tools">
+<button type="button" class="tool js-only" data-theme-toggle aria-label="Switch to the light skin"><span aria-hidden="true">◐</span></button>
+<button type="button" class="tool js-only" data-print><span>Print</span></button>
+</div>
+</nav></header>
+<main id="main">
+<section id="top" class="hero" aria-label="Introduction">
+<div class="hero-grid">
+<div class="cred-stage">
+<article class="cred" aria-label="Naman Gururani: credential">
+<div class="cred-foil" aria-hidden="true"></div>
+<div class="cred-glare" aria-hidden="true"></div>
+<div class="cred-body">
+<div class="cred-top"><span class="chipcard" aria-hidden="true"><i></i><i></i><i></i></span><span class="serial">PS-ID-0824</span><span class="live"><span class="dot" aria-hidden="true"></span>Barclays · since 2023</span></div>
+<p class="cred-kicker">Payments · Streaming · Backend</p>
+<h1>Naman Gururani</h1>
+<p class="cred-role">Data and Backend Engineer<span class="cred-at"> · Barclays · India</span></p>
+<dl class="cred-facts">
+<div><dt>Engineer</dt><dd>since Aug 2024 · promoted 2025</dd></div>
+<div><dt>Degree</dt><dd>B.Tech CSE · <span class="nw">9.63 / 10</span></dd></div>
+<div><dt>Rank</dt><dd>Top 5% of rank holders</dd></div>
+<div><dt>Building</dt><dd>Enlacey · Google Play</dd></div>
+</dl>
+<div class="cred-actions">
+<a class="btn primary" href="mailto:gururaninaman@gmail.com">Email</a>
+<button type="button" class="btn js-only" data-copy-email data-email="gururaninaman@gmail.com"><span class="copy-idle">Copy email</span><span class="copy-done" aria-hidden="true">Copied ✓</span></button>
+<a class="btn" href="https://github.com/Naman-Gururani" target="_blank" rel="noopener">GitHub</a>
+<a class="btn" href="https://www.linkedin.com/in/naman-gururani" target="_blank" rel="noopener">LinkedIn</a>
+</div>
+<span class="seal" aria-hidden="true"><span>NG</span></span>
+<div class="cred-code" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+</div>
+</article>
+</div>
+<div class="hero-copy">
+<p class="eyebrow">résumé · updated Nov 2026</p>
+<p class="headline"><span>I build the real-time systems</span> <span>that make payment data</span> <span class="holo-word">trustworthy.</span></p>
+<p class="open"><span class="dot" aria-hidden="true"></span><b>Open to new roles</b><span class="open-list"> · Backend · Data · Java · Full-stack · Spec-driven development</span></p>
+<p class="lede">Real-time payment data at Barclays, in Java, Kafka and Flink. B.Tech CSE with a CGPA of 9.63 / 10, among the top 5% of rank holders in my batch. Co-author of a paper on AI-assisted healthcare. Founder of Enlacey, live on Google Play.</p>
+<p class="about">I work at the layer where money becomes data: real-time streams from payment systems, turned into records a bank can trust.</p>
+<p class="about">Since joining Barclays as an intern in 2023, I have gone from writing my team’s first streaming services to owning its payment lineage engine end to end.</p>
+<p class="about">Outside work I build Enlacey, a local-services marketplace now live on Google Play, and I write about the systems I build.</p>
+<div class="interests"><span class="label">Interests</span><ul class="chips"><li class="chip">Stream processing</li><li class="chip">Data lineage and correctness</li><li class="chip">Distributed systems</li><li class="chip">Two-sided marketplaces</li></ul></div>
+</div>
+</div>
+</section>
+<section id="impact" class="sec" aria-labelledby="impact-h">
+<header class="sec-head"><span class="sec-no" aria-hidden="true">00</span><h2 id="impact-h">By the numbers</h2><span class="sec-rule" aria-hidden="true"></span></header>
+<ul class="metrics"><li class="metric glass">
+<p class="metric-value">~20<span class="metric-unit"> source systems</span></p>
+<p class="metric-label">one payment traced across all of them</p>
+<p class="metric-basis">The lineage engine I own matches each payment’s events across about 20 upstream systems, in real time.</p>
+</li><li class="metric glass">
+<p class="metric-value">100s of M<span class="metric-unit"> events a day</span></p>
+<p class="metric-label">the scale the engine is designed for</p>
+<p class="metric-basis">Designed and performance-tested for hundreds of millions of payment events a day.</p>
+</li><li class="metric glass">
+<p class="metric-value">8 h → live<span class="metric-unit"> as an intern</span></p>
+<p class="metric-label">a daily delay turned real time</p>
+<p class="metric-basis">My internship automation replaced an 8-hour wait for process exceptions with a real-time feed.</p>
+</li><li class="metric glass">
+<p class="metric-value">~95%<span class="metric-unit"> faster, estimated</span></p>
+<p class="metric-label">loan rollovers, in a 24-hour prototype</p>
+<p class="metric-basis">Internal hackathon estimate: about 2,000 manual hours a month saved. The owning team plans to adopt it.</p>
+</li></ul>
+</section>
+<section id="experience" class="sec" aria-labelledby="experience-h">
+<header class="sec-head"><span class="sec-no" aria-hidden="true">01</span><h2 id="experience-h">Experience</h2><span class="sec-rule" aria-hidden="true"></span></header>
+<article class="job glass">
+<header class="job-head"><h3>Barclays</h3><p class="job-where">India · <time datetime="2023-06">2023</time>–present</p><span class="serial" aria-hidden="true">PS-EXP-01</span></header>
+<div class="job-grid">
+<ol class="timeline" reversed aria-label="Roles at Barclays, newest first"><li class="role current">
+<span class="node" aria-hidden="true"></span>
+<p class="role-when"><time datetime="2025">2025</time><span class="dash" aria-hidden="true">–</span><span class="sr-only"> to </span><span>Present</span></p>
+<p class="role-title">Data and Backend Engineer <span class="grade">BA4</span> <span class="badge holo">Promoted</span></p>
+<p class="role-note">Promoted from BA3 to BA4</p>
+</li><li class="role">
+<span class="node" aria-hidden="true"></span>
+<p class="role-when"><time datetime="2024-08">Aug 2024</time><span class="dash" aria-hidden="true">–</span><span class="sr-only"> to </span><time datetime="2025">2025</time></p>
+<p class="role-title">Data and Backend Engineer <span class="grade">BA3</span> </p>
+<p class="role-note">Full time, after the internship</p>
+</li><li class="role">
+<span class="node" aria-hidden="true"></span>
+<p class="role-when"><time datetime="2023-06">Jun 2023</time><span class="dash" aria-hidden="true">–</span><span class="sr-only"> to </span><time datetime="2023-08">Aug 2023</time></p>
+<p class="role-title">DevOps Intern <span class="badge">Converted to full time</span></p>
+<p class="role-note">Converted to a full-time offer</p>
+</li></ol>
+<div class="wins">
+<ol class="win-list"><li class="win">
+<span class="win-no" aria-hidden="true">01</span>
+<div class="win-body"><p><strong>Designed and own the payment lineage engine, end to end.</strong> Different systems record the same corporate payment under their own identifiers; the engine works out, in real time, which events belong together and rebuilds each payment’s full journey across about 20 source systems. I gathered its requirements from several business analysts, built its cost model and took it through system and performance testing with two partner teams.</p><details class="how"><summary>How it works</summary><ul><li>Union-find groups related events, so chains that looked unrelated can be merged while new events keep arriving.</li><li>Lua scripts update live state in Redis atomically; distributed locks guard every merge.</li><li>A second tier on DynamoDB backs the live state held in Redis.</li><li>Designed for hundreds of millions of events a day.</li></ul></details><ul class="chips"><li class="chip sm">Flink</li><li class="chip sm">Kafka</li><li class="chip sm">Redis</li><li class="chip sm">DynamoDB</li></ul></div>
+</li><li class="win">
+<span class="win-no" aria-hidden="true">02</span>
+<div class="win-body"><p><strong>One of the first developers on the move to real-time streaming.</strong> The team was set up to move corporate-payments data off a legacy batch ETL stack onto one real-time Java platform. My proof-of-concept Flink and Kafka Streams code became the template for the team’s new services.</p><ul class="chips"><li class="chip sm">Java</li><li class="chip sm">Spring Boot</li><li class="chip sm">Kafka Streams</li><li class="chip sm">Flink</li></ul></div>
+</li><li class="win">
+<span class="win-no" aria-hidden="true">03</span>
+<div class="win-body"><p><strong>Built a connector the framework team reused.</strong> It brings ISO 20022 payment messages from IBM MQ into Kafka. The framework team reused it as the base for its generic version.</p><ul class="chips"><li class="chip sm">IBM MQ</li><li class="chip sm">Kafka</li><li class="chip sm">ISO 20022</li></ul></div>
+</li></ol>
+<details class="more"><summary>More from this role <span class="count">5</span></summary>
+<ol class="win-list" start="4"><li class="win">
+<span class="win-no" aria-hidden="true">04</span>
+<div class="win-body"><p><strong>Protected customer data in UK payment flows.</strong> I built the tokenisation of sensitive customer data in UK payment flows, and the jurisdiction controls that decide where payment data may be processed.</p></div>
+</li><li class="win">
+<span class="win-no" aria-hidden="true">05</span>
+<div class="win-body"><p><strong>Made the platform easier to run, without being asked.</strong> I set up dashboards and alerts on ELK and Snowflake that flag a service going down or overusing resources, and wrote a 60-step start-of-day checklist and the alert runbooks.</p><ul class="chips"><li class="chip sm">ELK</li><li class="chip sm">Snowflake</li></ul></div>
+</li><li class="win">
+<span class="win-no" aria-hidden="true">06</span>
+<div class="win-body"><p><strong>Taught the stack while learning it.</strong> The Java streaming stack was new to the whole team. I helped teammates learn it and ran sessions on Java and the stack for colleagues moving across from the legacy platform.</p></div>
+</li><li class="win">
+<span class="win-no" aria-hidden="true">07</span>
+<div class="win-body"><p><strong>Hackathon: loan rollovers, automated in 24 hours.</strong> In the bank’s internal hackathon our team built a working prototype that automates loan rollovers and their interest payments. Estimated effect: rollovers about 95% faster and about 2,000 manual hours a month saved. It did not win; the owning team’s director plans to implement it.</p></div>
+</li><li class="win">
+<span class="win-no" aria-hidden="true">08</span>
+<div class="win-body"><p><strong>Internship: an 8-hour delay, made real time.</strong> I automated the loading of process exceptions into an analyst portal through a secured REST API (OAuth 2.0), aggregating Teradata data with Python and KornShell, so analysts saw them as they happened instead of a working day later.</p><ul class="chips"><li class="chip sm">Python</li><li class="chip sm">KornShell</li><li class="chip sm">Teradata</li><li class="chip sm">OAuth 2.0</li></ul></div>
+</li></ol>
+</details>
+</div>
+</div>
+</article>
+</section>
+<section id="projects" class="sec" aria-labelledby="projects-h">
+<header class="sec-head"><span class="sec-no" aria-hidden="true">02</span><h2 id="projects-h">Projects</h2><span class="sec-rule" aria-hidden="true"></span></header>
+<div class="cards"><article class="card glass lg" id="p-enlacey">
+<span class="serial" aria-hidden="true">PS-001</span>
+<p class="card-kicker">FOUNDER · LIVE ON GOOGLE PLAY · <time datetime="2026">2026</time></p>
+<h3>Enlacey</h3>
+<p class="card-summary">An India-first marketplace for local services: post what you need, and verified providers nearby accept the job or send a quote. Live on Google Play since October 2026, launching in Haldwani; coming soon to iPhone.</p>
+<p class="card-role"><span class="label">My part</span> Founder. I run product, operations and provider onboarding, and design the backend with an AI engineering partner (Claude Code) writing most of the code.</p>
+<ul class="card-points"><li>Exactly one provider wins a job sent to many at once: every write that can touch a job takes a row lock on it first, so simultaneous accepts queue instead of colliding.</li><li>Hybrid search that mixes keyword and vector matching, so a customer can search in Hindi, English or Hinglish.</li><li>Trust is the product: a verification ladder from phone number to background checks, and a payment engine that stays switched off until it is licensed.</li><li>English and Hindi at parity across the app; data kept in India on a single cloud region.</li></ul>
+<ul class="chips"><li class="chip sm">TypeScript</li><li class="chip sm">NestJS</li><li class="chip sm">PostgreSQL · PostGIS · pgvector</li><li class="chip sm">Redis · BullMQ</li><li class="chip sm">Expo · React Native</li><li class="chip sm">Next.js</li><li class="chip sm">AWS</li></ul>
+<p class="card-links"><a class="arrow" href="https://play.google.com/store/apps/details?id=com.enlacey.app" target="_blank" rel="noopener">Google Play</a><a class="arrow" href="https://enlacey.com" target="_blank" rel="noopener">enlacey.com</a></p>
+</article><article class="card glass " id="p-healthcare">
+<span class="serial" aria-hidden="true">PS-002</span>
+<p class="card-kicker">MAJOR PROJECT · CO-AUTHORED PAPER</p>
+<h3>Healthcare Assistance (AI/ML)</h3>
+<p class="card-summary">A decision-support system for doctors, built as my final-year major project and written up as a co-authored paper.</p>
+<p class="card-role"><span class="label">My part</span> Team lead, supervised by Ms. Anjali Malik</p>
+<ul class="card-points"><li>Validated the model with cross-validation on held-out data.</li><li>Framed as support for a doctor’s judgement, never as a diagnosis.</li><li>Graded O (outstanding); my teammates chose me to lead again after the minor project.</li></ul>
+<ul class="chips"><li class="chip sm">Python</li><li class="chip sm">Machine learning</li></ul>
+
+</article><article class="card glass " id="p-fair">
+<span class="serial" aria-hidden="true">PS-003</span>
+<p class="card-kicker">THIS RÉSUMÉ, AS A GAME · <time datetime="2026">2026</time></p>
+<h3>Naman’s World Fair</h3>
+<p class="card-summary">A pixel-art fairground you can walk around: a Wordle ticket at the gate, my career as a rollercoaster, projects out of a claw machine, and a skip button in every game.</p>
+<p class="card-role"><span class="label">My part</span> Designed and directed it; built spec-first with Claude Code</p>
+<ul class="card-points"><li>About 1,200 automated tests; strict TypeScript throughout.</li><li>A Missions sheet and a guided &quot;Take me there&quot; walk for phone players.</li></ul>
+<ul class="chips"><li class="chip sm">TypeScript</li><li class="chip sm">Phaser 3</li><li class="chip sm">Vite</li><li class="chip sm">Vitest</li></ul>
+<p class="card-links"><a class="arrow" href="/portfolio/play/">Play it</a><a class="arrow" href="https://github.com/Naman-Gururani/portfolio" target="_blank" rel="noopener">Source</a></p>
+</article><article class="card glass " id="p-safestride">
+<span class="serial" aria-hidden="true">PS-004</span>
+<p class="card-kicker">PROJECT · SHIPPED</p>
+<h3>Safe Stride</h3>
+<p class="card-summary">A one-stop safety solution for the elderly.</p>
+<p class="card-role"><span class="label">My part</span> Built it</p>
+<ul class="card-points"><li>Real-time location tracking plus accelerometer-based fall detection.</li><li>Automatic SOS to emergency services, with a live map view.</li></ul>
+<ul class="chips"><li class="chip sm">Geolocation</li><li class="chip sm">Sensors</li><li class="chip sm">Twilio</li><li class="chip sm">Leaflet</li></ul>
+<p class="card-links"><a class="arrow" href="https://github.com/Naman-Gururani/Safe-Stride" target="_blank" rel="noopener">GitHub</a></p>
+</article><article class="card glass " id="p-flight">
+<span class="serial" aria-hidden="true">PS-005</span>
+<p class="card-kicker">MINOR PROJECT</p>
+<h3>Flight Delay Predictor</h3>
+<p class="card-summary">A machine-learning model that predicts flight delays, built as my minor project.</p>
+<p class="card-role"><span class="label">My part</span> Team lead, guided by Ms. Anjali Malik</p>
+<ul class="card-points"><li>Graded O (outstanding).</li></ul>
+<ul class="chips"><li class="chip sm">Python</li><li class="chip sm">Machine learning</li></ul>
+
+</article></div>
+</section>
+<section id="play" class="sec play" aria-label="The game version of this résumé">
+<a class="ticket" href="/portfolio/play/">
+<span class="ticket-stub" aria-hidden="true"><span class="ticket-admit">ADMIT ONE</span><span class="ticket-no">No. 0001</span></span>
+<span class="ticket-main">
+<span class="ticket-kicker">Naman’s World Fair · a pixel-art game</span>
+<span class="ticket-title">Same résumé. Now walk around it.</span>
+<span class="ticket-copy">A Wordle ticket at the gate, my career as a rollercoaster, projects out of a claw machine, and a skip button in every game. Works on phones.</span>
+<span class="ticket-go">Enter the fair <span aria-hidden="true">▶</span></span>
+</span>
+<span class="ticket-shot"><img src="/portfolio/resume/fair.webp" width="480" height="300" loading="lazy" decoding="async" alt="The entrance plaza of the game’s pixel-art fairground: a fountain, the Word Forge stall, snack stands, bunting and the Naman’s World Fair gate."></span>
+</a>
+</section>
+<section id="education" class="sec" aria-labelledby="education-h">
+<header class="sec-head"><span class="sec-no" aria-hidden="true">03</span><h2 id="education-h">Education</h2><span class="sec-rule" aria-hidden="true"></span></header>
+<article class="edu glass">
+<span class="serial" aria-hidden="true">PS-EDU-24</span>
+<h3>SRM Institute of Science and Technology</h3>
+<p class="edu-degree">B.Tech, Computer Science and Engineering · Delhi-NCR campus · <time datetime="2020">2020</time>–<time datetime="2024">2024</time></p>
+<dl class="edu-facts">
+<div><dt>CGPA</dt><dd class="big">9.63 / 10</dd></div>
+<div><dt>Rank</dt><dd>Among the top 5% of rank holders in the B.Tech CSE programme, batch 2020–2024<span class="src">Certified by the university’s Controller of Examinations</span></dd></div>
+<div><dt>Semesters</dt><dd>SGPA 10.00 / 10 in two semesters</dd></div>
+<div><dt>Completed</dt><dd>May 2024</dd></div>
+</dl>
+<p class="edu-courses"><span class="label">Selected grades</span> Database Management Systems: <b>O</b> · Major project: <b>O</b> · Minor project: <b>O</b></p>
+</article>
+</section>
+<section id="publication" class="sec" aria-labelledby="publication-h">
+<header class="sec-head"><span class="sec-no" aria-hidden="true">04</span><h2 id="publication-h">Publication</h2><span class="sec-rule" aria-hidden="true"></span></header>
+<article class="paper glass">
+<p class="paper-title">“Healthcare Assistance Using AIML”</p>
+<p class="paper-with">Co-authored with Ms. Anjali Malik, SRM Institute of Science and Technology</p>
+<p class="paper-note"><span class="label">My part</span> Written up from the final-year major project I led: a decision-support system for doctors, validated with cross-validation on held-out data.</p>
+</article>
+</section>
+<section id="leadership" class="sec" aria-labelledby="leadership-h">
+<header class="sec-head"><span class="sec-no" aria-hidden="true">05</span><h2 id="leadership-h">Leadership &amp; activities</h2><span class="sec-rule" aria-hidden="true"></span></header>
+<ul class="acts"><li class="act glass"><p class="act-what">Class representative</p><p class="act-where">B.Tech CSE, SRM IST</p><p class="act-when">B.Tech</p><p class="act-detail">Coordinated between my section and the faculty.</p></li><li class="act glass"><p class="act-what">Technical core team</p><p class="act-where">GeeksforGeeks student chapter, SRM IST</p><p class="act-when">2022–2024</p><p class="act-detail">Led club events.</p></li><li class="act glass"><p class="act-what">Core team, management</p><p class="act-where">Computer Society of India student chapter, SRM IST</p><p class="act-when">2021–2022</p></li><li class="act glass"><p class="act-what">Hackathons</p><p class="act-where">KIET Group of Institutions hackathon · Smart India Hackathon</p><p class="act-when">B.Tech</p><p class="act-detail">At KIET, ours was the only team from SRM.</p></li><li class="act glass"><p class="act-what">Project lead, twice</p><p class="act-where">Minor and major projects, SRM IST</p><p class="act-when">B.Tech</p><p class="act-detail">Both graded O; the major project became the paper.</p></li></ul>
+</section>
+<section id="writing" class="sec" aria-labelledby="writing-h">
+<header class="sec-head"><span class="sec-no" aria-hidden="true">06</span><h2 id="writing-h">Writing</h2><span class="sec-rule" aria-hidden="true"></span></header>
+<ul class="posts"><li class="post glass"><a class="post-title" href="https://naman-gururani.github.io/blog/building-a-portfolio-thats-a-game/" target="_blank" rel="noopener">Building a portfolio you can walk around</a><p class="post-date"><time datetime="2026-09-01">1 Sep 2026</time></p></li></ul>
+<p class="more-link"><a class="arrow" href="https://naman-gururani.github.io/blog/" target="_blank" rel="noopener">All posts on the blog</a></p>
+</section>
+<section id="skills" class="sec" aria-labelledby="skills-h">
+<header class="sec-head"><span class="sec-no" aria-hidden="true">07</span><h2 id="skills-h">Skills</h2><span class="sec-rule" aria-hidden="true"></span></header>
+<dl class="skills glass"><div><dt>Languages</dt><dd><ul class="chips"><li class="chip">Java</li><li class="chip">Python</li><li class="chip">SQL</li><li class="chip">C++</li></ul></dd></div><div><dt>Streaming</dt><dd><ul class="chips"><li class="chip">Apache Kafka</li><li class="chip">Kafka Streams</li><li class="chip">Apache Flink</li><li class="chip">IBM MQ</li></ul></dd></div><div><dt>Data</dt><dd><ul class="chips"><li class="chip">Redis</li><li class="chip">DynamoDB</li><li class="chip">Snowflake</li><li class="chip">Teradata</li></ul></dd></div><div><dt>Platform</dt><dd><ul class="chips"><li class="chip">Spring Boot</li><li class="chip">AWS</li><li class="chip">Docker</li><li class="chip">Linux</li><li class="chip">ELK</li><li class="chip">Git</li></ul></dd></div><div><dt>How I work</dt><dd><ul class="chips"><li class="chip">Spec-first design</li><li class="chip">AI-assisted development</li></ul></dd></div></dl>
+</section>
+<section id="contact" class="sec" aria-labelledby="contact-h">
+<header class="sec-head"><span class="sec-no" aria-hidden="true">08</span><h2 id="contact-h">Contact</h2><span class="sec-rule" aria-hidden="true"></span></header>
+<div class="contact glass">
+<p class="contact-line">Looking for a backend, data or Java engineer? I am open to new roles, and happy to talk about streams, lineage or marketplaces.</p>
+<p class="contact-mail"><a href="mailto:gururaninaman@gmail.com">gururaninaman@gmail.com</a></p>
+<p class="contact-links"><a class="arrow" href="https://github.com/Naman-Gururani" target="_blank" rel="noopener">GitHub</a><a class="arrow" href="https://www.linkedin.com/in/naman-gururani" target="_blank" rel="noopener">LinkedIn</a><a class="arrow" href="https://naman-gururani.github.io/blog/" target="_blank" rel="noopener">Blog</a><a class="arrow" href="https://naman-gururani.github.io/" target="_blank" rel="noopener">Homepage</a></p>
+</div>
+</section>
+</main>
+<footer class="foot">
+<p>© 2026 Naman Gururani · Updated Nov 2026 · Hand-built with Vite, no framework.</p>
+<p><a href="/portfolio/play/">Play the game</a> · <a href="https://naman-gururani.github.io/" target="_blank" rel="noopener">Homepage</a></p>
+</footer>
   </body>
 </html>
