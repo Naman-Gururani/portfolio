@@ -10,7 +10,7 @@
      part of the story, told in full under Experience;
    - facts only from the spec's sources; estimates say so;
    - nothing about graduate applications, tests or target schools;
-     saying he is open to new roles is wanted;
+     saying he is open to new opportunities is wanted;
    - bank detail at "option B": engineering detail, scale as orders of
      magnitude, no internal system / team / project names.
    Text may carry [label](href) links; the renderer turns them into <a>.
@@ -75,7 +75,7 @@ export const PERSON = {
     `The rest of the time I build my own things. Back home there’s always a guy who knows a guy, so I built [Enlacey](${PLAY_STORE}), an app that finds you that guy. It’s live on Google Play.`,
     'I also turned this résumé into a little [pixel-art game](/portfolio/play/), for anyone who’d rather play than read.',
   ],
-  connect: 'If you’re building something of your own, or want to, I’d love to hear about it. I’m also open to new roles, so if you’re hiring, email me.',
+  connect: 'If you’re building something of your own, or want to, I’d love to hear about it. I’m also open to new opportunities, so if you have one, email me.',
   openTo: ['backend', 'data', 'full-stack'],
   interests: [
     'Building apps end to end',

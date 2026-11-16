@@ -31,7 +31,7 @@ describe('the intro is about Naman, not his job', () => {
     const story = text('.hero-copy')
     for (const bit of ['Haldwani', 'Enlacey', 'I like solving problems']) expect(story).toContain(bit)
     expect(story).toMatch(/building something of your own/i)
-    expect(story).toMatch(/hiring/i)
+    expect(story).toMatch(/new opportunities/i)
   })
 
   it('lists interests a person would have, not pipeline jargon', () => {
@@ -63,8 +63,8 @@ describe('the card shows what a reader cares about', () => {
     expect(card).toMatch(/3 PRs merged/)
   })
 
-  it('says he is open to new roles', () => {
-    expect(card).toMatch(/Open to new roles/)
+  it('says he is open to new opportunities', () => {
+    expect(card).toMatch(/Open to new opportunities/)
   })
 })
 

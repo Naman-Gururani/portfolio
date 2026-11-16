@@ -104,9 +104,9 @@ describe('review fixes (v6 final review)', () => {
 })
 
 describe('open to roles (Naman, 2026-11-16)', () => {
-  it('says plainly, near the top and at the end, that Naman is open to new roles', () => {
-    expect(doc.querySelector('.hero .live')?.textContent).toMatch(/Open to new roles/)
-    expect(doc.querySelector('#contact')?.textContent).toMatch(/open to new roles/i)
+  it('says plainly, near the top and at the end, that Naman is open to new opportunities', () => {
+    expect(doc.querySelector('.hero .live')?.textContent).toMatch(/Open to new opportunities/)
+    expect(doc.querySelector('#contact')?.textContent).toMatch(/open to new opportunities/i)
     expect(doc.querySelector('#contact')?.textContent).toMatch(/hiring/i)
   })
 })

@@ -97,7 +97,7 @@ function hero(): string {
 <div class="cred-foil" aria-hidden="true"></div>
 <div class="cred-glare" aria-hidden="true"></div>
 <div class="cred-body">
-<div class="cred-top"><span class="chipcard" aria-hidden="true"><i></i><i></i><i></i></span><span class="serial">PS-ID-0824</span><span class="live"><span class="dot" aria-hidden="true"></span>Open to new roles</span></div>
+<div class="cred-top"><span class="chipcard" aria-hidden="true"><i></i><i></i><i></i></span><span class="serial">PS-ID-0824</span><span class="live"><span class="dot" aria-hidden="true"></span>Open to new opportunities</span></div>
 <p class="cred-kicker">${esc(PERSON.kicker)}</p>
 <h1>${esc(PERSON.name)}</h1>
 <p class="cred-role">${esc(PERSON.title)} @ ${esc(PERSON.employer)}</p>
@@ -277,7 +277,7 @@ function contact(): string {
     'Contact',
     `<div class="contact glass">
 <p class="contact-line">Building something, or hiring? Email me.</p>
-<p class="contact-sub">I’m open to new roles, looking at ${esc(PERSON.openTo.slice(0, -1).join(', '))} and ${esc(PERSON.openTo[PERSON.openTo.length - 1])} work.</p>
+<p class="contact-sub">I’m open to new opportunities, looking at ${esc(PERSON.openTo.slice(0, -1).join(', '))} and ${esc(PERSON.openTo[PERSON.openTo.length - 1])} work.</p>
 <p class="contact-mail"><a href="mailto:${esc(PERSON.email)}">${esc(PERSON.email)}</a></p>
 <p class="contact-links">${link(PERSON.github, 'GitHub', 'arrow')}${link(PERSON.linkedin, 'LinkedIn', 'arrow')}${link(PERSON.blog, 'Blog', 'arrow')}${link(PERSON.site, 'Homepage', 'arrow')}</p>
 </div>`,
@@ -342,7 +342,7 @@ export function renderResume(): string {
 /** Title, description, canonical, link previews and structured data. */
 export function renderHead(): string {
   const title = `${PERSON.name} — ${PERSON.title}`
-  const desc = `${PERSON.name}: a software engineer from ${PERSON.home} who loves hard problems and building apps. ${PERSON.title} at ${PERSON.employer}, founder of Enlacey, open to new roles.`
+  const desc = `${PERSON.name}: a software engineer from ${PERSON.home} who loves solving problems and building apps. ${PERSON.title} at ${PERSON.employer}, founder of Enlacey, open to new opportunities.`
   const img = `${SITE}og.jpg`
   const ld = {
     '@context': 'https://schema.org',
