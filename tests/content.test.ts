@@ -192,7 +192,7 @@ describe('every zone', () => {
     // The card is the record's summary, shortened: every fact on it is one the
     // record states too.
     const body = (vault.content.body ?? []).join(' ')
-    for (const fact of ['Haldwani', 'Pune', 'since October 2026', 'iPhone']) {
+    for (const fact of ['Haldwani', 'since October 2026', 'iPhone']) {
       expect(body, `the Enlacey card no longer says "${fact}"`).toContain(fact)
       expect(enlacey.summary, `resume.ts no longer says "${fact}"`).toContain(fact)
     }

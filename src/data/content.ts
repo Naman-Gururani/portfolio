@@ -109,8 +109,8 @@ export const ZONES: Zone[] = [
       title: 'Hi, I’m Naman 👋',
       sub: `${PERSON.title} · ${COMPANY}`,
       body: [
-        'I love writing code, and the hard problem that comes before it.',
-        'By day I build real-time payment systems at Barclays, where every event is someone’s money, so it has to be right at any scale.',
+        'I love writing code, especially when the problem is still a mess.',
+        'At Barclays I work on real-time payment systems, where every event is somebody’s money.',
         'The rest of the time I build my own things, like Enlacey, an app for finding help you can trust back home in Haldwani.',
       ],
       facts: [
@@ -136,7 +136,7 @@ export const ZONES: Zone[] = [
         // One headline for both grades: the title has run unbroken from the first
         // full-time grade to the current one (the promotion is the fact below).
         `⭐ ${PERSON.title} · ${COMPANY} · ${span({ ...FULL_TIME, to: CURRENT.to })}`,
-        'I consume real-time streams from Apache Kafka and IBM MQ and turn raw events into something trustworthy — tokenized, classified by jurisdiction, mapped to canonical codes. I built a real-time payment lineage engine that reconstructs the full path of every payment across highly decoupled systems (each hop guarantees exactly one upstream and one downstream), running at hundreds of millions of records a day. I work spec-first, with AI spec-driven development.',
+        'I consume real-time streams from Apache Kafka and IBM MQ and turn raw events into data the bank can rely on: tokenised, sorted by jurisdiction, mapped to standard codes. I built a real-time payment lineage engine that reconstructs the full path of every payment across highly decoupled systems (each hop guarantees exactly one upstream and one downstream), designed for hundreds of millions of records a day. I work spec-first, with AI spec-driven development.',
         `🛠️ ${INTERN.title} · ${COMPANY} · ${span(INTERN)}`,
         'Automated loading of process exceptions into an analyst portal via a secured (OAuth 2.0) REST API — collapsing an 8-hour delay into real time — aggregating Teradata data with Python and KornShell.',
       ],
@@ -199,7 +199,7 @@ export const ZONES: Zone[] = [
       title: 'Real-time Payment Lineage Engine',
       sub: 'Barclays',
       body: [
-        'A backend engine that reconstructs the complete lineage of every payment — every system it touched, in order — across highly decoupled services. Each hop guarantees exactly one upstream and one downstream; the engine stitches those single links into an end-to-end path, continuously, at hundreds of millions of records a day.',
+        'A backend engine that reconstructs the complete lineage of every payment — every system it touched, in order — across highly decoupled services. Each hop guarantees exactly one upstream and one downstream; the engine stitches those single links into an end-to-end path, continuously, designed to scale to hundreds of millions of records a day.',
       ],
       chips: ['Apache Flink', 'Apache Kafka', 'Redis', 'DynamoDB'],
     },
@@ -220,7 +220,7 @@ export const ZONES: Zone[] = [
       title: ENLACEY.name,
       sub: 'Founder · live on Google Play',
       body: [
-        'Back home there’s always a guy who knows a guy. Enlacey is the app that finds you that guy: live on Google Play in Haldwani and Pune since October 2026, and coming soon to iPhone.',
+        'An app for finding trusted local help: post what you need, and verified people nearby accept the job or send a quote. Live on Google Play since October 2026, starting in Haldwani, and coming soon to iPhone.',
       ],
       links: [{ label: 'Google Play', value: `${ENLACEY.name} on Google Play`, href: PLAY_STORE, ext: true }],
     },

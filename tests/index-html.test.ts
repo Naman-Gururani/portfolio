@@ -67,7 +67,7 @@ const FACTS = [
   PROFILE.name,
   'Data & Backend Engineer',
   'Barclays',
-  'the hard problem that comes before it',
+  'especially when the problem is still a mess',
   // the stack the noscript block lists
   'Apache Kafka',
   'Apache Flink',

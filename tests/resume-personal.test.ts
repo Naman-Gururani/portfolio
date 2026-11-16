@@ -170,3 +170,35 @@ describe('the voice', () => {
     expect(doc.body.textContent).not.toMatch(/without being asked|passionate|seamless|leverag|cutting-edge|unglamorous/i)
   })
 })
+
+describe('v6.1 review fixes', () => {
+  const all = doc.body.textContent ?? ''
+
+  it('drops the made-up saying and the job-title kicker', () => {
+    expect(all).not.toMatch(/favourite place|Engineer · Builder · Founder|where nothing is allowed to go missing/)
+  })
+
+  it('claims only what Enlacey actually runs and where it is live', () => {
+    expect(all).not.toMatch(/vector matching|Pune/)
+    expect(text('#p-enlacey')).toMatch(/Haldwani/)
+  })
+
+  it('states the ~20 systems as the platform’s design, and puts the 4,000+ across all branches', () => {
+    expect(all).not.toMatch(/One corporate payment passes through about 20 systems/)
+    expect(text('#education')).toContain('4,000+ students across all branches')
+  })
+
+  it('leaves out the timezone story Naman removed from his letter, and the undated hackathon year', () => {
+    expect(all).not.toMatch(/BST|UTC/)
+    expect(doc.querySelector('#ch-hackathon time[datetime]')).toBeNull()
+  })
+
+  it('says how the site is really built', () => {
+    expect(text('.foot')).not.toMatch(/Hand-built/)
+  })
+
+  it('reveals chapters without folding them, so there is no toggle and no hidden text', () => {
+    expect(doc.querySelector('.ch-toggle')).toBeNull()
+    expect(doc.querySelector('.ch-more[hidden], .ch-more[aria-hidden]')).toBeNull()
+  })
+})

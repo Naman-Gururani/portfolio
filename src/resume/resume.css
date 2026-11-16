@@ -3017,9 +3017,11 @@ details > summary::-webkit-details-marker {
 }
 
 .journey-rail ol::after {
-  height: calc((100% - 16px) * var(--progress, 1));
+  bottom: 8px;
   background: linear-gradient(180deg, var(--h1), var(--h2), var(--h3));
-  transition: height 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform: scaleY(var(--progress, 1));
+  transform-origin: 50% 0;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .journey-rail li + li {
@@ -3080,7 +3082,7 @@ details > summary::-webkit-details-marker {
 
 .chapter {
   padding: clamp(20px, 3vw, 32px);
-  scroll-margin-top: 90px;
+  scroll-margin-top: 12px;
 }
 
 .chapter.current {
@@ -3238,23 +3240,21 @@ details > summary::-webkit-details-marker {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .ch-more {
-    transition: grid-template-rows 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.6s ease 0.1s;
+  /* chapters keep their full height; the details fade and rise into place as
+     the reader reaches them, so nothing above an anchor ever changes size */
+  .ch-inner {
+    transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
-  .journey.is-live .chapter:not(.open) .ch-more {
-    grid-template-rows: 0fr;
+  .journey.is-live .chapter:not(.open) .ch-inner {
     opacity: 0;
+    transform: translateY(22px);
   }
 
   .journey.is-live .chapter:not(.open) {
     opacity: 0.72;
   }
 
-  .journey.is-live .chapter:not(.open) .ch-toggle {
-    display: inline-flex;
-    align-items: center;
-  }
 
   .journey.is-live .chapter {
     transition: opacity 0.5s, border-color 0.35s, box-shadow 0.35s, transform 0.35s;

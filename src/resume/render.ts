@@ -134,7 +134,7 @@ function ticket(): string {
 <span class="ticket-stub" aria-hidden="true"><span class="ticket-admit">ADMIT ONE</span><span class="ticket-no">No. 0001</span></span>
 <span class="ticket-main">
 <span class="ticket-kicker">Naman’s World Fair · a pixel-art game</span>
-<span class="ticket-title">Same résumé. Now walk around it.</span>
+<span class="ticket-title">The same résumé, as a game.</span>
 <span class="ticket-copy">Win a Wordle ticket at the gate, ride my career on a rollercoaster and pull projects out of a claw machine. Every game can be skipped, and it works on phones.</span>
 <span class="ticket-go">Enter the fair <span aria-hidden="true">▶</span></span>
 </span>
@@ -173,7 +173,7 @@ function blog(): string {
 <p class="blog-go" aria-hidden="true">Read →</p>
 </article>`,
     ).join('')}
-<a class="blog-all glass" ${attrs(PERSON.blog)}><span class="blog-all-k">The blog</span><span class="blog-all-t">Everything I’ve written, and what’s next</span><span class="blog-go">All posts →</span></a>
+<a class="blog-all glass" ${attrs(PERSON.blog)}><span class="blog-all-k">The blog</span><span class="blog-all-t">All posts</span><span class="blog-go">All posts →</span></a>
 </div>`,
   )
 }
@@ -222,12 +222,11 @@ function chapter(c: Chapter): string {
   return `<li class="chapter glass" id="${c.id}">
 <span class="ch-node" aria-hidden="true"></span>
 <div class="ch-head">
-<p class="ch-when"><time datetime="${esc(c.datetime)}">${esc(c.when)}</time></p>
+<p class="ch-when">${c.datetime ? `<time datetime="${esc(c.datetime)}">${esc(c.when)}</time>` : esc(c.when)}</p>
 <h3 class="ch-title">${esc(c.title)}</h3>
 <p class="ch-role">${esc(c.role)}</p>
 <p class="ch-lead">${esc(c.lead)}</p>
 ${metrics}
-${more ? `<button type="button" class="ch-toggle js-only" aria-expanded="true" aria-controls="${c.id}-more">Read the details</button>` : ''}
 </div>
 ${more ? `<div class="ch-more" id="${c.id}-more"><div class="ch-inner">${more}</div></div>` : ''}
 </li>`
@@ -238,7 +237,7 @@ function experience(): string {
     'experience',
     '04',
     'Experience',
-    `<p class="sec-lede">Barclays, so far: from intern to owning the payment lineage engine in three years.</p>
+    `<p class="sec-lede">I joined Barclays as an intern in 2023. This is what I’ve worked on since.</p>
 <div class="journey" data-journey>
 <nav class="journey-rail" aria-label="My years at Barclays"><ol>${JOURNEY.map(
       (c) => `<li><a href="#${c.id}"><span class="rail-dot" aria-hidden="true"></span><span class="rail-year">${esc(c.rail)}</span><span class="rail-title">${esc(c.title)}</span></a></li>`,
@@ -277,8 +276,8 @@ function contact(): string {
     '07',
     'Contact',
     `<div class="contact glass">
-<p class="contact-line">Building something, thinking about it, or hiring? Let’s talk.</p>
-<p class="contact-sub">I’m open to new roles in ${esc(PERSON.openTo.slice(0, -1).join(', '))} and ${esc(PERSON.openTo[PERSON.openTo.length - 1].toLowerCase())}, and always happy to meet people who want to build something of their own.</p>
+<p class="contact-line">Building something, or hiring? Email me.</p>
+<p class="contact-sub">I’m open to new roles, looking at ${esc(PERSON.openTo.slice(0, -1).join(', '))} and ${esc(PERSON.openTo[PERSON.openTo.length - 1])} work.</p>
 <p class="contact-mail"><a href="mailto:${esc(PERSON.email)}">${esc(PERSON.email)}</a></p>
 <p class="contact-links">${link(PERSON.github, 'GitHub', 'arrow')}${link(PERSON.linkedin, 'LinkedIn', 'arrow')}${link(PERSON.blog, 'Blog', 'arrow')}${link(PERSON.site, 'Homepage', 'arrow')}</p>
 </div>`,
@@ -287,7 +286,7 @@ function contact(): string {
 
 function footer(): string {
   return `<footer class="foot">
-<p>© 2026 ${esc(PERSON.name)} · Updated ${esc(UPDATED)} · Hand-built with Vite, no framework.</p>
+<p>© 2026 ${esc(PERSON.name)} · Updated ${esc(UPDATED)} · Built with Vite, no framework.</p>
 <p><a href="${GAME}">Play the game</a> · ${link(PERSON.site, 'Homepage')}</p>
 </footer>`
 }

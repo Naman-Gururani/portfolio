@@ -37,8 +37,8 @@ export type Chapter = {
   /** What the year rail and the chapter's date line say. */
   rail: string
   when: string
-  /** Machine-readable start, for <time>. */
-  datetime: string
+  /** Machine-readable start, for <time>; left out when no source dates it. */
+  datetime?: string
   role: string
   title: string
   lead: string
@@ -66,21 +66,21 @@ export const PERSON = {
   linkedinHandle: 'in/naman-gururani',
   site: 'https://naman-gururani.github.io/',
   blog: 'https://naman-gururani.github.io/blog/',
-  kicker: 'Engineer · Builder · Founder',
+  kicker: 'Software engineer from Haldwani',
   hello: 'hi, I’m Naman',
-  headline: ['My favourite place is somewhere between', 'a hard problem and', 'a working app.'],
+  headline: ['I like hard problems,', 'and I like building', 'things people use.'],
   story: [
     'I’m a software engineer from Haldwani, and I love writing code. Mostly I love the bit before it works, when a problem is still a mess and I get to figure it out.',
-    'By day I’m at Barclays, building the backend systems that follow payments in real time, where nothing is allowed to go missing.',
+    'My day job is at Barclays. I work on the backend that tracks payments in real time.',
     `The rest of the time I build my own things. Back home there’s always a guy who knows a guy, so I built [Enlacey](${PLAY_STORE}), an app that finds you that guy. It’s live on Google Play.`,
     'I also turned this résumé into a little [pixel-art game](/portfolio/play/), for anyone who’d rather play than read.',
   ],
-  connect: 'If you’re building something of your own, or want to, I’d love to hear about it. And if you’re hiring, I’m listening.',
-  openTo: ['Backend', 'Data', 'Java', 'Full-stack', 'Spec-driven development'],
+  connect: 'If you’re building something of your own, or want to, I’d love to hear about it. I’m also open to new roles, so if you’re hiring, email me.',
+  openTo: ['backend', 'data', 'full-stack'],
   interests: [
     'Building apps end to end',
     'Backend & system design',
-    'Cracking hard problems',
+    'Problem solving',
     'Starting something of my own',
     'Open source',
     'The gym',
@@ -113,13 +113,13 @@ export const JOURNEY: Chapter[] = [
     when: 'Jun – Aug 2023',
     datetime: '2023-06',
     role: 'DevOps Intern · Barclays Global Service Center',
-    title: 'An 8-hour wait, gone',
+    title: 'My internship: an 8-hour wait down to real time',
     lead: 'Analysts were waiting up to 8 hours for process exceptions to reach their portal. I automated the whole path behind it.',
     metrics: [{ value: '8 h → live', label: 'how long analysts waited' }],
     points: [
-      'Python and KornShell (KSH) scripts pull the exception data out of Teradata tables and shape it into something analysts can read.',
+      'Python and KornShell (KSH) scripts aggregate the exception data from Teradata tables into an organised format.',
       'An integration with the portal’s REST API loads it, so exceptions now show up in real time.',
-      'OAuth 2.0 secures the connection to the API, and the requests and responses run on their own.',
+      'OAuth 2.0 authentication secures the connection to the API, so sending requests and receiving responses is automated.',
     ],
     outcome: 'The internship turned into a full-time offer.',
     tags: ['Python', 'KornShell', 'Teradata', 'REST API', 'OAuth 2.0'],
@@ -131,13 +131,13 @@ export const JOURNEY: Chapter[] = [
     datetime: '2024-08',
     role: 'Data & Backend Engineer · full time',
     title: 'Building a platform from day one',
-    lead: 'My team was set up to move the bank’s corporate payments data off a legacy batch stack and onto one real-time platform in Java, and I was one of its first developers. Streams are harder than batch jobs: they never stop, and they have to recover from a failure without losing or duplicating a single payment.',
+    lead: 'My team was set up to move the bank’s corporate payments data off a legacy batch stack and onto one real-time platform in Java, and I was one of its first developers. Streaming was new to all of us, and it’s harder than batch: you can’t rerun a stream overnight, so it has to recover from a failure without losing or doubling a payment.',
     metrics: [],
     points: [
       'My proof-of-concept Flink and Kafka Streams code became the template the team built its services on.',
       'My first big delivery was tokenising sensitive customer data in UK payment flows. Then I built the jurisdiction controls that decide where payment data may be processed.',
       'I set up dashboards and alerts on ELK and Snowflake that flag a service going down or using too much, and wrote the 60-step start-of-day checklist and the alert runbooks.',
-      'Some bugs took real digging. A cache connection that dropped about once an hour turned out to be credentials rotating three layers down. A BST-to-UTC timestamp fix also corrected 90 days of history.',
+      'Some bugs took real digging. A cache connection that dropped about once an hour turned out to be credentials rotating three layers down.',
       'The stack was new to the whole team, so I ran sessions on Java and streaming for colleagues moving over from the old platform.',
     ],
     outcome: 'Promoted from BA3 to BA4 in 2025.',
@@ -150,9 +150,9 @@ export const JOURNEY: Chapter[] = [
     datetime: '2026',
     role: 'Data & Backend Engineer · BA4',
     title: 'The payment lineage engine',
-    lead: 'One corporate payment passes through about 20 systems, and each one records it under its own ID. The lineage engine works out, live, which events belong to the same payment and rebuilds its whole journey. It’s what our platform exists to show: clients and other teams see a payment’s path on screen, and in an incident the payments team can trace its whole life cycle to fix the problem or prove nothing was lost. I designed it from a blank page, and I own it end to end.',
+    lead: 'Our platform takes payment data from about 20 source systems, and each one records a payment under its own ID. The lineage engine works out, live, which events belong to the same payment and rebuilds its whole journey. Showing that path is the main point of our platform: it’s built so clients and other teams can see where a payment went, and so the payments team can trace its whole life cycle in an incident, to fix the problem or prove nothing was lost. I designed it from a blank page, and I own it end to end.',
     metrics: [
-      { value: '~20', label: 'source systems traced' },
+      { value: '~20', label: 'source systems, by design' },
       { value: '100s of millions', label: 'events a day, by design' },
     ],
     hard: [
@@ -173,9 +173,8 @@ export const JOURNEY: Chapter[] = [
     id: 'ch-hackathon',
     rail: 'Hackathon',
     when: 'Along the way',
-    datetime: '2024',
     role: 'Internal hackathon · team entry',
-    title: '24 hours, one loan-rollover prototype',
+    title: 'A loan-rollover prototype in 24 hours',
     lead: 'Another team was rolling over loans and their interest payments by hand. In the bank’s internal hackathon, my team built a working prototype that does it automatically. We didn’t win, but that team’s director plans to use the idea.',
     metrics: [
       { value: '~95%', label: 'faster rollovers (estimate)' },
@@ -192,13 +191,13 @@ export const PROJECTS: Project[] = [
     name: 'Enlacey',
     kicker: 'MY STARTUP · LIVE ON GOOGLE PLAY',
     when: '2026',
-    role: 'Founder. I decide what we build, run operations, sign up the first providers and design the backend, with Claude Code writing most of the code alongside me.',
+    role: 'Founder. I run the product and operations, sign up the first providers and approve every change; Claude Code writes most of the code.',
     summary:
-      'Back home, when you need a plumber or a cook, you ask around until someone knows someone. Enlacey turns that into an app: post what you need, and verified people nearby accept the job or send a quote. It’s been live on Google Play in Haldwani and Pune since October 2026, and it’s coming soon to iPhone.',
+      'Post what you need, a plumber, a cook, an electrician, and verified people nearby accept the job or send a quote. It’s been live on Google Play since October 2026, starting in Haldwani, and it’s coming soon to iPhone.',
     points: [
       'A job goes out to many providers at once, and exactly one gets it. Every write that touches a job locks its row first, so two people tapping Accept at the same moment can’t both win.',
-      'Search understands Hindi, English and the mix of the two people actually type, by combining keyword and vector matching in Postgres.',
-      'Trust comes first: providers climb a verification ladder from phone number to background check, and online payments stay switched off until the paperwork is done.',
+      'Search handles Hindi, English and the mix of the two people actually type, typos included, all inside Postgres.',
+      'Providers get verified in steps, from phone number to background check, and online payments stay switched off until the paperwork is done.',
       'The whole app works in English and in Hindi.',
     ],
     stack: ['TypeScript', 'NestJS', 'PostgreSQL · PostGIS · pgvector', 'Redis · BullMQ', 'Expo · React Native', 'Next.js', 'AWS'],
@@ -253,7 +252,7 @@ export const PROJECTS: Project[] = [
       'A system that helps doctors make decisions with machine learning. It was my final-year project, and we wrote it up as a paper with my supervisor.',
     points: [
       'Validated the model with cross-validation on held-out data.',
-      'Built to support a doctor’s judgement, not to replace it.',
+      'Meant as a second opinion for doctors.',
       'Graded O, the top grade. My teammates picked me to lead again after our minor project.',
     ],
     stack: ['Python', 'Machine learning'],
@@ -294,7 +293,7 @@ export const EDUCATION = {
   completed: 'May 2024',
   cgpa: '9.63 / 10',
   sgpa: 'SGPA 10.00 / 10 in two semesters',
-  rank: 'Among the top 5% of rank holders in the B.Tech CSE programme, batch 2020–2024 of 4,000+ students',
+  rank: 'Among the top 5% of rank holders in the B.Tech CSE programme, batch 2020–2024 (4,000+ students across all branches)',
   rankSource: 'Certified by the university’s Controller of Examinations',
   courses: [{ name: 'Database Management Systems', grade: 'O' }],
 } as const
