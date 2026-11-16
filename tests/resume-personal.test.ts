@@ -29,7 +29,7 @@ describe('the intro is about Naman, not his job', () => {
 
   it('tells a story: home, code, problems, his own app, and who he wants to meet', () => {
     const story = text('.hero-copy')
-    for (const bit of ['Haldwani', 'Enlacey', 'hard problem']) expect(story).toContain(bit)
+    for (const bit of ['Haldwani', 'Enlacey', 'I like solving problems']) expect(story).toContain(bit)
     expect(story).toMatch(/building something of your own/i)
     expect(story).toMatch(/hiring/i)
   })
@@ -200,5 +200,18 @@ describe('v6.1 review fixes', () => {
   it('reveals chapters without folding them, so there is no toggle and no hidden text', () => {
     expect(doc.querySelector('.ch-toggle')).toBeNull()
     expect(doc.querySelector('.ch-more[hidden], .ch-more[aria-hidden]')).toBeNull()
+  })
+})
+
+describe('v6.2 (Naman, 17 Nov)', () => {
+  it('gives the Smart India Hackathon and InnoHacks 2.0 their own tiles', () => {
+    const acts = [...doc.querySelectorAll('#leadership .act')].map((a) => a.textContent ?? '')
+    expect(acts.some((a) => /Smart India Hackathon/.test(a) && !/KIET/.test(a))).toBe(true)
+    expect(acts.some((a) => /InnoHacks 2\.0/.test(a) && /KIET/.test(a) && /2023/.test(a))).toBe(true)
+  })
+
+  it('replaces the glass balls with silk lines in the background', () => {
+    expect(doc.querySelector('.scene .orb, .scene .ring, .scene .prism')).toBeNull()
+    expect(doc.querySelectorAll('.scene svg.silk path').length).toBeGreaterThan(20)
   })
 })

@@ -68,7 +68,7 @@ export const PERSON = {
   blog: 'https://naman-gururani.github.io/blog/',
   kicker: 'Software engineer from Haldwani',
   hello: 'hi, I’m Naman',
-  headline: ['I like hard problems,', 'and I like building', 'things people use.'],
+  headline: ['I like solving problems,', 'and I like building', 'things people use.'],
   story: [
     'I’m a software engineer from Haldwani, and I love writing code. Mostly I love the bit before it works, when a problem is still a mess and I get to figure it out.',
     'My day job is at Barclays. I work on the backend that tracks payments in real time.',
@@ -81,6 +81,7 @@ export const PERSON = {
     'Building apps end to end',
     'Backend & system design',
     'Problem solving',
+    'Hackathons',
     'Starting something of my own',
     'Open source',
     'The gym',
@@ -336,10 +337,16 @@ export const ACTIVITIES: Activity[] = [
     when: '2021–2022',
   },
   {
-    what: 'Hackathons',
-    where: 'KIET Group of Institutions hackathon · Smart India Hackathon',
+    what: 'InnoHacks 2.0',
+    where: 'KIET Group of Institutions, Ghaziabad',
+    when: 'Apr 2023',
+    detail: 'A 24-hour in-person hackathon. Ours was the only team from SRM.',
+  },
+  {
+    what: 'Smart India Hackathon',
+    where: 'India’s national student hackathon',
     when: 'B.Tech',
-    detail: 'At KIET, ours was the only team from SRM.',
+    detail: 'Took part with a team from SRM.',
   },
   {
     what: 'Project lead, twice',

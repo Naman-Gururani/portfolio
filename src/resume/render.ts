@@ -291,12 +291,37 @@ function footer(): string {
 </footer>`
 }
 
+/**
+ * The background: two ribbons of thin lines that drift like light on silk,
+ * drawn once here as plain SVG paths (no images, no script). Each ribbon is
+ * a stack of gently phase-shifted sine waves; the middle lines are brightest.
+ */
+export function silk(): string {
+  const ribbon = (n: number, y0: number, gap: number, amp: number, freq: number, phase: number) => {
+    const out: string[] = []
+    for (let i = 0; i < n; i++) {
+      const pts: string[] = []
+      for (let x = -80; x <= 1680; x += 40) {
+        const y = y0 + i * gap + amp * Math.sin(x * freq + phase + i * 0.11) + amp * 0.6 * Math.sin(x * freq * 0.37 + i * 0.05)
+        pts.push(`${x},${Math.round(y)}`)
+      }
+      const o = (0.06 + 0.3 * Math.sin((Math.PI * (i + 0.5)) / n)).toFixed(2)
+      out.push(`<path d="M${pts.join(' L')}" stroke-opacity="${o}"/>`)
+    }
+    return out.join('')
+  }
+  return `<svg class="silk" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" focusable="false">
+<defs><linearGradient id="silk-ink" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--h1)"/><stop offset="0.45" stop-color="var(--h2)"/><stop offset="0.8" stop-color="var(--h3)"/><stop offset="1" stop-color="var(--h1)"/></linearGradient></defs>
+<g class="silk-a" fill="none" stroke="url(#silk-ink)" stroke-width="1">${ribbon(26, 170, 9, 70, 0.0042, 0.2)}</g>
+<g class="silk-b" fill="none" stroke="url(#silk-ink)" stroke-width="1">${ribbon(18, 640, 11, 90, 0.0031, 2.1)}</g>
+</svg>`
+}
+
 /** The whole `<body>` content. */
 export function renderResume(): string {
   return [
     '<a class="skip" href="#main">Skip to content</a>',
-    '<div class="scene" aria-hidden="true"><div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div><div class="floor"></div><div class="dots"></div>' +
-      '<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="ring"><div class="ring-in"></div></div><div class="prism"></div></div>',
+    `<div class="scene" aria-hidden="true"><div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div><div class="dots"></div>${silk()}</div>`,
     ribbon(),
     bar(),
     '<main id="main">',

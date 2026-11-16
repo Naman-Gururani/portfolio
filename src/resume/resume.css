@@ -3428,3 +3428,79 @@ details > summary::-webkit-details-marker {
     transition: none !important;
   }
 }
+
+/* ============================================================
+   v6.2 — the background is silk, not glass balls: two ribbons of thin
+   holographic lines drift slowly behind the panes.
+   ============================================================ */
+
+.orb,
+.ring,
+.prism,
+.floor {
+  display: none;
+}
+
+.silk {
+  position: absolute;
+  inset: -6% -4%;
+  width: 108%;
+  height: 112%;
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 40%, #000 35%, transparent 85%);
+  mask-image: radial-gradient(120% 90% at 50% 40%, #000 35%, transparent 85%);
+}
+
+:root[data-theme='light'] .silk {
+  opacity: 0.7;
+  filter: saturate(1.4) brightness(0.75);
+}
+
+.glow {
+  filter: blur(10px);
+}
+
+.g1 {
+  background: radial-gradient(circle, rgba(80, 185, 255, 0.22) 0%, transparent 62%);
+}
+
+.g2 {
+  background: radial-gradient(circle, rgba(180, 115, 255, 0.2) 0%, transparent 60%);
+}
+
+.g3 {
+  background: radial-gradient(circle, rgba(255, 125, 195, 0.14) 0%, transparent 60%);
+}
+
+.dots {
+  opacity: 0.3;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .silk-a {
+    animation: silk-a 34s ease-in-out infinite alternate;
+  }
+
+  .silk-b {
+    animation: silk-b 42s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes silk-a {
+  to {
+    transform: translate(-60px, 26px);
+  }
+}
+
+@keyframes silk-b {
+  to {
+    transform: translate(70px, -30px);
+  }
+}
+
+.silk {
+  opacity: 0.8;
+}
+
+:root[data-theme='light'] .silk {
+  opacity: 0.55;
+}
