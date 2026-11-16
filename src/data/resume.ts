@@ -46,7 +46,7 @@ export const PERSON = {
   blog: 'https://naman-gururani.github.io/blog/',
   headline: ['I build the real-time systems', 'that make payment data', 'trustworthy.'],
   summary:
-    'Real-time payment data at Barclays, in Java, Kafka and Flink. B.Tech CSE with a CGPA of 9.63 / 10, among the top 5% of rank holders in my batch. Co-author of a paper on AI-assisted healthcare. Founder of Enlacey, live on Google Play.',
+    'Real-time payment data at Barclays, in Java, Kafka and Flink. B.Tech CSE with a CGPA of 9.63 / 10, among the top 5% of rank holders in a batch of 4,000+ students. Co-author of a paper on AI-assisted healthcare. Founder of Enlacey, live on Google Play.',
   about: [
     'I work at the layer where money becomes data: real-time streams from payment systems, turned into records a bank can trust.',
     'Since joining Barclays as an intern in 2023, I have gone from writing my team’s first streaming services to owning its payment lineage engine end to end.',
@@ -231,7 +231,7 @@ export const EDUCATION = {
   completed: 'May 2024',
   cgpa: '9.63 / 10',
   sgpa: 'SGPA 10.00 / 10 in two semesters',
-  rank: 'Among the top 5% of rank holders in the B.Tech CSE programme, batch 2020–2024',
+  rank: 'Among the top 5% of rank holders in the B.Tech CSE programme, batch 2020–2024 of 4,000+ students',
   rankSource: 'Certified by the university’s Controller of Examinations',
   courses: [{ name: 'Database Management Systems', grade: 'O' }],
 } as const

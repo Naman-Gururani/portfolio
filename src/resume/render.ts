@@ -98,7 +98,7 @@ function hero(): string {
 <dl class="cred-facts">
 <div><dt>Engineer</dt><dd>since ${esc(fmtDate(EXPERIENCE.roles[1].from))} · promoted ${esc(fmtDate(now.from))}</dd></div>
 <div><dt>Degree</dt><dd>B.Tech CSE · <span class="nw">${esc(EDUCATION.cgpa)}</span></dd></div>
-<div><dt>Rank</dt><dd>Top 5% of rank holders</dd></div>
+<div><dt>Rank</dt><dd>Top 5% of 4,000+</dd></div>
 <div><dt>Building</dt><dd>Enlacey · Google Play</dd></div>
 </dl>
 <div class="cred-actions">

@@ -91,7 +91,7 @@ describe('renderHead', () => {
 describe('review fixes (v6 final review)', () => {
   it('shows the certified rank and plain dates on the credential', () => {
     const facts = doc.querySelector('.cred-facts')?.textContent ?? ''
-    expect(facts).toContain('Top 5% of rank holders')
+    expect(facts).toContain('Top 5% of 4,000+')
     expect(facts).toContain('since Aug 2024')
     expect(facts).not.toMatch(/BA4/)
   })

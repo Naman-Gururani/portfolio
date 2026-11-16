@@ -32,11 +32,12 @@ describe('the résumé record', () => {
     expect(roles[1].grade).toBe('BA3')
   })
 
-  it('reports grades as issued and the rank as certified, with no cohort size', () => {
+  it('reports grades as issued and the rank as certified, with the batch size Naman gave', () => {
     expect(R.EDUCATION.cgpa).toBe('9.63 / 10')
     expect(R.EDUCATION.rank).toMatch(/top 5%/i)
-    // The batch years are fine; a head count ("of 4,000 students") is not.
-    expect(R.EDUCATION.rank.replace('2020–2024', '')).not.toMatch(/\d{3,}|\d,\d{3}/)
+    // The certificate states no size; Naman looked it up (2026-11-16): 4,000+.
+    expect(R.EDUCATION.rank).toContain('4,000+ students')
+    expect(R.PERSON.summary).toContain('4,000+')
   })
 
   it('carries four impact numbers, each with its basis', () => {
