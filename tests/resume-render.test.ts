@@ -12,7 +12,7 @@ const head = renderHead()
 const doc = new DOMParser().parseFromString(`<!doctype html><html><head>${head}</head><body>${body}</body></html>`, 'text/html')
 const text = doc.body.textContent ?? ''
 
-const SECTIONS = ['top', 'impact', 'experience', 'projects', 'play', 'education', 'publication', 'leadership', 'writing', 'skills', 'contact']
+const SECTIONS = ['top', 'play', 'projects', 'blog', 'education', 'paper', 'experience', 'leadership', 'skills', 'contact']
 
 describe('renderResume', () => {
   it('has every section the nav and the spy rely on', () => {
@@ -26,7 +26,7 @@ describe('renderResume', () => {
   })
 
   it('states the facts a reader scans for', () => {
-    for (const f of [PERSON.title, 'Barclays', EDUCATION.cgpa, EDUCATION.rank, PUBLICATION.title, 'Promoted'])
+    for (const f of [PERSON.title, 'Barclays', EDUCATION.cgpa, EDUCATION.rank, PUBLICATION.title, 'Promoted from BA3 to BA4'])
       expect(text, f).toContain(f)
     for (const p of PROJECTS) expect(text, p.name).toContain(p.name)
   })
@@ -89,11 +89,11 @@ describe('renderHead', () => {
 })
 
 describe('review fixes (v6 final review)', () => {
-  it('shows the certified rank and plain dates on the credential', () => {
+  it('keeps internal grades off the credential', () => {
+    // v6.1 moved the rank to Education and dropped the promotion from the card
+    // (Naman, 2026-11-16); tests/resume-personal.test.ts pins what it shows now.
     const facts = doc.querySelector('.cred-facts')?.textContent ?? ''
-    expect(facts).toContain('Top 5% of 4,000+')
-    expect(facts).toContain('since Aug 2024')
-    expect(facts).not.toMatch(/BA4/)
+    expect(facts).not.toMatch(/BA4|BA3/)
   })
 
   it('describes the ticket picture as it is', () => {
@@ -105,7 +105,8 @@ describe('review fixes (v6 final review)', () => {
 
 describe('open to roles (Naman, 2026-11-16)', () => {
   it('says plainly, near the top and at the end, that Naman is open to new roles', () => {
-    expect(doc.querySelector('.hero .open')?.textContent).toMatch(/Open to new roles/)
-    expect(doc.querySelector('#contact')?.textContent).toMatch(/Looking for a backend, data or Java engineer\?/)
+    expect(doc.querySelector('.hero .live')?.textContent).toMatch(/Open to new roles/)
+    expect(doc.querySelector('#contact')?.textContent).toMatch(/open to new roles/i)
+    expect(doc.querySelector('#contact')?.textContent).toMatch(/hiring/i)
   })
 })

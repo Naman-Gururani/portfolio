@@ -109,8 +109,9 @@ export const ZONES: Zone[] = [
       title: 'Hi, I’m Naman 👋',
       sub: `${PERSON.title} · ${COMPANY}`,
       body: [
-        'I’m a backend & streaming-data engineer. I work at the layer where money becomes data — turning high-volume, real-time event streams into something you can trust.',
-        'I like the unglamorous backbone: the pipelines, the guarantees, the lineage that lets a single number be believed at scale.',
+        'I love writing code, and the hard problem that comes before it.',
+        'By day I build real-time payment systems at Barclays, where every event is someone’s money, so it has to be right at any scale.',
+        'The rest of the time I build my own things, like Enlacey, an app for finding help you can trust back home in Haldwani.',
       ],
       facts: [
         { k: 'Now', v: `${PERSON.title} · ${COMPANY}` },
@@ -219,7 +220,7 @@ export const ZONES: Zone[] = [
       title: ENLACEY.name,
       sub: 'Founder · live on Google Play',
       body: [
-        'An India-first marketplace for local services, launching in Haldwani. Live on Google Play since October 2026; coming soon to iPhone.',
+        'Back home there’s always a guy who knows a guy. Enlacey is the app that finds you that guy: live on Google Play in Haldwani and Pune since October 2026, and coming soon to iPhone.',
       ],
       links: [{ label: 'Google Play', value: `${ENLACEY.name} on Google Play`, href: PLAY_STORE, ext: true }],
     },

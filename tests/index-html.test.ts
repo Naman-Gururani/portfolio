@@ -65,9 +65,9 @@ const CORPUS = [...ZONES.map(textOf), ...Object.values(PROFILE)].join('\n')
 const FACTS = [
   // who
   PROFILE.name,
-  'Data and Backend Engineer',
+  'Data & Backend Engineer',
   'Barclays',
-  'backend & streaming-data engineer',
+  'the hard problem that comes before it',
   // the stack the noscript block lists
   'Apache Kafka',
   'Apache Flink',

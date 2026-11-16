@@ -166,7 +166,7 @@ describe('coaster stops', () => {
     const s = at(2)
     const body = zone('experience').content.body ?? []
     expect(s.kicker).toBe('2024')
-    expect(s.title).toContain('Data and Backend Engineer')
+    expect(s.title).toContain('Data & Backend Engineer')
     expect(s.title).toContain('Barclays')
     expect(s.title).not.toMatch(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u)
     expect(body[0]).toContain(s.kicker)
@@ -212,7 +212,7 @@ describe('careerCard()', () => {
 
   it('carries both role headlines, glyphs stripped', () => {
     const body = card.body ?? []
-    expect(body.some((p) => p.startsWith('Data and Backend Engineer · Barclays'))).toBe(true)
+    expect(body.some((p) => p.startsWith('Data & Backend Engineer · Barclays'))).toBe(true)
     expect(body.some((p) => p.startsWith('DevOps Intern · Barclays'))).toBe(true)
     for (const p of body) expect(p.startsWith('⭐') || p.startsWith('🛠'), `"${p.slice(0, 24)}" keeps a role glyph`).toBe(false)
   })

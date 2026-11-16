@@ -16,7 +16,8 @@ const hrefs = (v: unknown): string[] =>
 
 describe('the résumé record', () => {
   it('names the role exactly as Naman chose it', () => {
-    expect(R.PERSON.title).toBe('Data and Backend Engineer')
+    // written with "&" since v6.1 (Naman, 2026-11-16)
+    expect(R.PERSON.title).toBe('Data & Backend Engineer')
     expect(R.PERSON.employer).toBe('Barclays')
   })
 
@@ -37,18 +38,20 @@ describe('the résumé record', () => {
     expect(R.EDUCATION.rank).toMatch(/top 5%/i)
     // The certificate states no size; Naman looked it up (2026-11-16): 4,000+.
     expect(R.EDUCATION.rank).toContain('4,000+ students')
-    expect(R.PERSON.summary).toContain('4,000+')
+    // …and it lives in Education, not in the intro or on the card (v6.1)
+    expect(JSON.stringify(R.PERSON) + JSON.stringify(R.CARD)).not.toMatch(/top 5%|rank/i)
   })
 
-  it('carries four impact numbers, each with its basis', () => {
-    expect(R.METRICS).toHaveLength(4)
-    for (const m of R.METRICS) expect(m.basis.length).toBeGreaterThan(10)
+  it('keeps the impact numbers inside the Barclays chapters they come from', () => {
+    const metrics = R.JOURNEY.flatMap((c) => c.metrics)
+    expect(metrics).toHaveLength(5)
+    for (const m of metrics) expect(m.value && m.label).toBeTruthy()
   })
 
   it('links only over https or mailto', () => {
     const all = [...hrefs(R), R.PERSON.github, R.PERSON.linkedin, R.PERSON.site, R.PERSON.blog]
     expect(all.length).toBeGreaterThan(8)
-    for (const h of all) expect(h).toMatch(/^(https:\/\/|mailto:|\/portfolio\/)/)
+    for (const h of all) expect(h).toMatch(/^(https:\/\/|mailto:|\/portfolio\/|#)/)
   })
 
   it('never mentions applications, tests or target schools', () => {
@@ -68,12 +71,14 @@ describe('the résumé record', () => {
 
 describe('review fixes (v6 final review)', () => {
   it('words the rank as certified everywhere, including the summary', () => {
-    expect(R.PERSON.summary).toMatch(/top 5% of rank holders/i)
+    expect(R.EDUCATION.rank).toMatch(/top 5% of rank holders/i)
     expect(ALL).not.toMatch(/top 5% of (my )?batch/i)
   })
 
+  // v6.1: Naman pointed to the college folder (the Barclays letter draft) for the
+  // year-by-year work, so the "first big delivery" line is sourced now; these stay out.
   it('claims only what the fact sheet supports', () => {
-    for (const p of [/made their standard/i, /taught myself/i, /after a year/i, /days late/i, /first major delivery/i, /support teams follow/i, /coordinated the teammates/i])
+    for (const p of [/made their standard/i, /taught myself/i, /after a year/i, /days late/i, /support teams follow/i, /coordinated the teammates/i])
       expect(ALL).not.toMatch(p)
     const rep = R.ACTIVITIES.find((a) => a.what === 'Class representative')!
     expect(rep.when).not.toMatch(/\d/)

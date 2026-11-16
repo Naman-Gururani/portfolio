@@ -4,18 +4,21 @@
    time, and the game's cards (content.ts) take their shared facts
    from it, so the two can never disagree.
 
-   Rules (spec docs/superpowers/specs/2026-11-16-resume-site-design.md):
-   - facts only from the spec's §3 sources; nothing estimated is shown
-     without saying so;
-   - public page: nothing about applications, tests or target schools;
+   Rules (spec docs/superpowers/specs/2026-11-16-resume-site-design.md,
+   §2–§3 and §10):
+   - it is about Naman, told in his own casual voice; the job is one
+     part of the story, told in full under Experience;
+   - facts only from the spec's sources; estimates say so;
+   - nothing about graduate applications, tests or target schools;
+     saying he is open to new roles is wanted;
    - bank detail at "option B": engineering detail, scale as orders of
      magnitude, no internal system / team / project names.
+   Text may carry [label](href) links; the renderer turns them into <a>.
    ============================================================ */
 
 export type Link = { label: string; href: string }
 /** Dates are 'YYYY-MM' or 'YYYY'; `to: null` means "present". */
 export type Role = { title: string; grade?: string; from: string; to: string | null; note?: string }
-export type Bullet = { lead: string; text: string; how?: string[]; tags?: string[] }
 export type Project = {
   id: string
   name: string
@@ -28,15 +31,34 @@ export type Project = {
   links: Link[]
   size: 'lg' | 'md'
 }
-export type Metric = { value: string; unit: string; label: string; basis: string }
+export type Metric = { value: string; label: string }
+export type Chapter = {
+  id: string
+  /** What the year rail and the chapter's date line say. */
+  rail: string
+  when: string
+  /** Machine-readable start, for <time>. */
+  datetime: string
+  role: string
+  title: string
+  lead: string
+  metrics: Metric[]
+  hard?: string[]
+  points: string[]
+  outcome?: string
+  tags: string[]
+}
 export type Activity = { what: string; where: string; when: string; detail?: string }
-export type Post = { title: string; href: string; date: string }
+export type Post = { title: string; href: string; date: string; description: string; tags: string[] }
+
+const PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.enlacey.app'
 
 export const PERSON = {
   name: 'Naman Gururani',
-  title: 'Data and Backend Engineer',
+  title: 'Data & Backend Engineer',
   employer: 'Barclays',
   location: 'India',
+  home: 'Haldwani',
   email: 'gururaninaman@gmail.com',
   github: 'https://github.com/Naman-Gururani',
   githubHandle: 'Naman-Gururani',
@@ -44,136 +66,166 @@ export const PERSON = {
   linkedinHandle: 'in/naman-gururani',
   site: 'https://naman-gururani.github.io/',
   blog: 'https://naman-gururani.github.io/blog/',
-  headline: ['I build the real-time systems', 'that make payment data', 'trustworthy.'],
-  summary:
-    'Real-time payment data at Barclays, in Java, Kafka and Flink. B.Tech CSE with a CGPA of 9.63 / 10, among the top 5% of rank holders in a batch of 4,000+ students. Co-author of a paper on AI-assisted healthcare. Founder of Enlacey, live on Google Play.',
-  about: [
-    'I work at the layer where money becomes data: real-time streams from payment systems, turned into records a bank can trust.',
-    'Since joining Barclays as an intern in 2023, I have gone from writing my team’s first streaming services to owning its payment lineage engine end to end.',
-    'Outside work I build Enlacey, a local-services marketplace now live on Google Play, and I write about the systems I build.',
+  kicker: 'Engineer · Builder · Founder',
+  hello: 'hi, I’m Naman',
+  headline: ['My favourite place is somewhere between', 'a hard problem and', 'a working app.'],
+  story: [
+    'I’m a software engineer from Haldwani, and I love writing code. Mostly I love the bit before it works, when a problem is still a mess and I get to figure it out.',
+    'By day I’m at Barclays, building the backend systems that follow payments in real time, where nothing is allowed to go missing.',
+    `The rest of the time I build my own things. Back home there’s always a guy who knows a guy, so I built [Enlacey](${PLAY_STORE}), an app that finds you that guy. It’s live on Google Play.`,
+    'I also turned this résumé into a little [pixel-art game](/portfolio/play/), for anyone who’d rather play than read.',
   ],
+  connect: 'If you’re building something of your own, or want to, I’d love to hear about it. And if you’re hiring, I’m listening.',
   openTo: ['Backend', 'Data', 'Java', 'Full-stack', 'Spec-driven development'],
-  interests: ['Stream processing', 'Data lineage and correctness', 'Distributed systems', 'Two-sided marketplaces'],
+  interests: [
+    'Building apps end to end',
+    'Backend & system design',
+    'Cracking hard problems',
+    'Starting something of my own',
+    'Open source',
+    'The gym',
+  ],
 } as const
 
-export const METRICS: Metric[] = [
-  {
-    value: '~20',
-    unit: 'source systems',
-    label: 'one payment traced across all of them',
-    basis: 'The lineage engine I own matches each payment’s events across about 20 upstream systems, in real time.',
-  },
-  {
-    value: '100s of M',
-    unit: 'events a day',
-    label: 'the scale the engine is designed for',
-    basis: 'Designed and performance-tested for hundreds of millions of payment events a day.',
-  },
-  {
-    value: '8 h → live',
-    unit: 'as an intern',
-    label: 'a daily delay turned real time',
-    basis: 'My internship automation replaced an 8-hour wait for process exceptions with a real-time feed.',
-  },
-  {
-    value: '~95%',
-    unit: 'faster, estimated',
-    label: 'loan rollovers, in a 24-hour prototype',
-    basis: 'Internal hackathon estimate: about 2,000 manual hours a month saved. The owning team plans to adopt it.',
-  },
-]
+/** The credential on the hero: only what a reader actually wants to know. */
+export const CARD = {
+  studied: { school: 'SRM Institute of Science and Technology', detail: 'B.Tech CSE · CGPA 9.63 / 10' },
+  building: { label: 'Enlacey', href: PLAY_STORE, detail: 'live on Google Play' },
+  openSource: { label: '3 PRs merged', href: '#p-oss', detail: 'Conductor · Docling' },
+} as const
 
-export const EXPERIENCE: { employer: string; place: string; roles: Role[]; bullets: Bullet[] } = {
+/** The Barclays roles, newest first. The game's cards read these. */
+export const EXPERIENCE: { employer: string; place: string; roles: Role[] } = {
   employer: 'Barclays',
   place: 'India',
   roles: [
-    { title: 'Data and Backend Engineer', grade: 'BA4', from: '2025', to: null, note: 'Promoted from BA3 to BA4' },
-    { title: 'Data and Backend Engineer', grade: 'BA3', from: '2024-08', to: '2025', note: 'Full time, after the internship' },
+    { title: 'Data & Backend Engineer', grade: 'BA4', from: '2025', to: null, note: 'Promoted from BA3 to BA4' },
+    { title: 'Data & Backend Engineer', grade: 'BA3', from: '2024-08', to: '2025', note: 'Full time, after the internship' },
     { title: 'DevOps Intern', from: '2023-06', to: '2023-08', note: 'Converted to a full-time offer' },
   ],
-  bullets: [
-    {
-      lead: 'Designed and own the payment lineage engine, end to end.',
-      text: 'Different systems record the same corporate payment under their own identifiers; the engine works out, in real time, which events belong together and rebuilds each payment’s full journey across about 20 source systems. I gathered its requirements from several business analysts, built its cost model and took it through system and performance testing with two partner teams.',
-      how: [
-        'Union-find groups related events, so chains that looked unrelated can be merged while new events keep arriving.',
-        'Lua scripts update live state in Redis atomically; distributed locks guard every merge.',
-        'A second tier on DynamoDB backs the live state held in Redis.',
-        'Designed for hundreds of millions of events a day.',
-      ],
-      tags: ['Flink', 'Kafka', 'Redis', 'DynamoDB'],
-    },
-    {
-      lead: 'One of the first developers on the move to real-time streaming.',
-      text: 'The team was set up to move corporate-payments data off a legacy batch ETL stack onto one real-time Java platform. My proof-of-concept Flink and Kafka Streams code became the template for the team’s new services.',
-      tags: ['Java', 'Spring Boot', 'Kafka Streams', 'Flink'],
-    },
-    {
-      lead: 'Built a connector the framework team reused.',
-      text: 'It brings ISO 20022 payment messages from IBM MQ into Kafka. The framework team reused it as the base for its generic version.',
-      tags: ['IBM MQ', 'Kafka', 'ISO 20022'],
-    },
-    {
-      lead: 'Protected customer data in UK payment flows.',
-      text: 'I built the tokenisation of sensitive customer data in UK payment flows, and the jurisdiction controls that decide where payment data may be processed.',
-    },
-    {
-      lead: 'Made the platform easier to run, without being asked.',
-      text: 'I set up dashboards and alerts on ELK and Snowflake that flag a service going down or overusing resources, and wrote a 60-step start-of-day checklist and the alert runbooks.',
-      tags: ['ELK', 'Snowflake'],
-    },
-    {
-      lead: 'Taught the stack while learning it.',
-      text: 'The Java streaming stack was new to the whole team. I helped teammates learn it and ran sessions on Java and the stack for colleagues moving across from the legacy platform.',
-    },
-    {
-      lead: 'Hackathon: loan rollovers, automated in 24 hours.',
-      text: 'In the bank’s internal hackathon our team built a working prototype that automates loan rollovers and their interest payments. Estimated effect: rollovers about 95% faster and about 2,000 manual hours a month saved. It did not win; the owning team’s director plans to implement it.',
-    },
-    {
-      lead: 'Internship: an 8-hour delay, made real time.',
-      text: 'I automated the loading of process exceptions into an analyst portal through a secured REST API (OAuth 2.0), aggregating Teradata data with Python and KornShell, so analysts saw them as they happened instead of a working day later.',
-      tags: ['Python', 'KornShell', 'Teradata', 'OAuth 2.0'],
-    },
-  ],
 }
+
+/** "Barclays, so far": the chapters that open as the reader scrolls. */
+export const JOURNEY: Chapter[] = [
+  {
+    id: 'ch-intern',
+    rail: '2023',
+    when: 'Jun – Aug 2023',
+    datetime: '2023-06',
+    role: 'DevOps Intern · Barclays Global Service Center',
+    title: 'An 8-hour wait, gone',
+    lead: 'Analysts were waiting up to 8 hours for process exceptions to reach their portal. I automated the whole path behind it.',
+    metrics: [{ value: '8 h → live', label: 'how long analysts waited' }],
+    points: [
+      'Python and KornShell (KSH) scripts pull the exception data out of Teradata tables and shape it into something analysts can read.',
+      'An integration with the portal’s REST API loads it, so exceptions now show up in real time.',
+      'OAuth 2.0 secures the connection to the API, and the requests and responses run on their own.',
+    ],
+    outcome: 'The internship turned into a full-time offer.',
+    tags: ['Python', 'KornShell', 'Teradata', 'REST API', 'OAuth 2.0'],
+  },
+  {
+    id: 'ch-platform',
+    rail: '2024–25',
+    when: 'Aug 2024 – 2025',
+    datetime: '2024-08',
+    role: 'Data & Backend Engineer · full time',
+    title: 'Building a platform from day one',
+    lead: 'My team was set up to move the bank’s corporate payments data off a legacy batch stack and onto one real-time platform in Java, and I was one of its first developers. Streams are harder than batch jobs: they never stop, and they have to recover from a failure without losing or duplicating a single payment.',
+    metrics: [],
+    points: [
+      'My proof-of-concept Flink and Kafka Streams code became the template the team built its services on.',
+      'My first big delivery was tokenising sensitive customer data in UK payment flows. Then I built the jurisdiction controls that decide where payment data may be processed.',
+      'I set up dashboards and alerts on ELK and Snowflake that flag a service going down or using too much, and wrote the 60-step start-of-day checklist and the alert runbooks.',
+      'Some bugs took real digging. A cache connection that dropped about once an hour turned out to be credentials rotating three layers down. A BST-to-UTC timestamp fix also corrected 90 days of history.',
+      'The stack was new to the whole team, so I ran sessions on Java and streaming for colleagues moving over from the old platform.',
+    ],
+    outcome: 'Promoted from BA3 to BA4 in 2025.',
+    tags: ['Java', 'Spring Boot', 'Kafka', 'Kafka Streams', 'Flink', 'ELK', 'Snowflake', 'AWS'],
+  },
+  {
+    id: 'ch-lineage',
+    rail: '2026',
+    when: '2026',
+    datetime: '2026',
+    role: 'Data & Backend Engineer · BA4',
+    title: 'The payment lineage engine',
+    lead: 'One corporate payment passes through about 20 systems, and each one records it under its own ID. The lineage engine works out, live, which events belong to the same payment and rebuilds its whole journey. It’s what our platform exists to show: clients and other teams see a payment’s path on screen, and in an incident the payments team can trace its whole life cycle to fix the problem or prove nothing was lost. I designed it from a blank page, and I own it end to end.',
+    metrics: [
+      { value: '~20', label: 'source systems traced' },
+      { value: '100s of millions', label: 'events a day, by design' },
+    ],
+    hard: [
+      'Events arrive out of order, and some arrive late.',
+      'Two chains that looked unrelated can turn out to be one payment, and they have to be merged while new events keep coming in.',
+      'One bad write corrupts a payment’s history.',
+    ],
+    points: [
+      'Union-find groups related events, so chains can merge cleanly.',
+      'Lua scripts update the live state in Redis atomically, and distributed locks guard every merge.',
+      'A second tier on DynamoDB keeps what outlives the in-memory store.',
+      'I gathered the requirements from several business analysts, built the cost model for approval, and ran system and performance testing with two partner teams.',
+      'This year I also built a connector that brings ISO 20022 payment messages from IBM MQ into Kafka. The framework team reused it as the base for their generic version.',
+    ],
+    tags: ['Flink', 'Kafka', 'Redis', 'Lua', 'DynamoDB', 'IBM MQ', 'ISO 20022'],
+  },
+  {
+    id: 'ch-hackathon',
+    rail: 'Hackathon',
+    when: 'Along the way',
+    datetime: '2024',
+    role: 'Internal hackathon · team entry',
+    title: '24 hours, one loan-rollover prototype',
+    lead: 'Another team was rolling over loans and their interest payments by hand. In the bank’s internal hackathon, my team built a working prototype that does it automatically. We didn’t win, but that team’s director plans to use the idea.',
+    metrics: [
+      { value: '~95%', label: 'faster rollovers (estimate)' },
+      { value: '~2,000 h', label: 'manual work saved a month (estimate)' },
+    ],
+    points: [],
+    tags: [],
+  },
+]
 
 export const PROJECTS: Project[] = [
   {
     id: 'enlacey',
     name: 'Enlacey',
-    kicker: 'FOUNDER · LIVE ON GOOGLE PLAY',
+    kicker: 'MY STARTUP · LIVE ON GOOGLE PLAY',
     when: '2026',
-    role: 'Founder. I run product, operations and provider onboarding, and design the backend with an AI engineering partner (Claude Code) writing most of the code.',
+    role: 'Founder. I decide what we build, run operations, sign up the first providers and design the backend, with Claude Code writing most of the code alongside me.',
     summary:
-      'An India-first marketplace for local services: post what you need, and verified providers nearby accept the job or send a quote. Live on Google Play since October 2026, launching in Haldwani; coming soon to iPhone.',
+      'Back home, when you need a plumber or a cook, you ask around until someone knows someone. Enlacey turns that into an app: post what you need, and verified people nearby accept the job or send a quote. It’s been live on Google Play in Haldwani and Pune since October 2026, and it’s coming soon to iPhone.',
     points: [
-      'Exactly one provider wins a job sent to many at once: every write that can touch a job takes a row lock on it first, so simultaneous accepts queue instead of colliding.',
-      'Hybrid search that mixes keyword and vector matching, so a customer can search in Hindi, English or Hinglish.',
-      'Trust is the product: a verification ladder from phone number to background checks, and a payment engine that stays switched off until it is licensed.',
-      'English and Hindi at parity across the app; data kept in India on a single cloud region.',
+      'A job goes out to many providers at once, and exactly one gets it. Every write that touches a job locks its row first, so two people tapping Accept at the same moment can’t both win.',
+      'Search understands Hindi, English and the mix of the two people actually type, by combining keyword and vector matching in Postgres.',
+      'Trust comes first: providers climb a verification ladder from phone number to background check, and online payments stay switched off until the paperwork is done.',
+      'The whole app works in English and in Hindi.',
     ],
     stack: ['TypeScript', 'NestJS', 'PostgreSQL · PostGIS · pgvector', 'Redis · BullMQ', 'Expo · React Native', 'Next.js', 'AWS'],
     links: [
-      { label: 'Google Play', href: 'https://play.google.com/store/apps/details?id=com.enlacey.app' },
+      { label: 'Google Play', href: PLAY_STORE },
       { label: 'enlacey.com', href: 'https://enlacey.com' },
     ],
     size: 'lg',
   },
   {
-    id: 'healthcare',
-    name: 'Healthcare Assistance (AI/ML)',
-    kicker: 'MAJOR PROJECT · CO-AUTHORED PAPER',
-    role: 'Team lead, supervised by Ms. Anjali Malik',
-    summary:
-      'A decision-support system for doctors, built as my final-year major project and written up as a co-authored paper.',
+    id: 'oss',
+    name: 'Open source',
+    kicker: '3 PRS MERGED',
+    when: '2026',
+    role: 'Contributor',
+    summary: 'I like fixing things in tools other people depend on. Three of my pull requests have been merged so far.',
     points: [
-      'Validated the model with cross-validation on held-out data.',
-      'Framed as support for a doctor’s judgement, never as a diagnosis.',
-      'Graded O (outstanding); my teammates chose me to lead again after the minor project.',
+      'Conductor: swapped a regex that could hang on crafted input for a linear scanner, closing a high-severity security alert. Shipped in v3.32.5.',
+      'Docling Java: the client’s async calls can now run on your own Executor. Shipped in v0.7.0.',
+      'Docling: LaTeX conversion now keeps the spacing and paragraphs around inline macros.',
     ],
-    stack: ['Python', 'Machine learning'],
-    links: [],
+    stack: ['Java', 'Python'],
+    links: [
+      { label: 'Conductor #1654', href: 'https://github.com/conductor-oss/conductor/pull/1654' },
+      { label: 'Docling Java #691', href: 'https://github.com/docling-project/docling-java/pull/691' },
+      { label: 'Docling #4340', href: 'https://github.com/docling-project/docling/pull/4340' },
+    ],
     size: 'md',
   },
   {
@@ -183,11 +235,8 @@ export const PROJECTS: Project[] = [
     when: '2026',
     role: 'Designed and directed it; built spec-first with Claude Code',
     summary:
-      'A pixel-art fairground you can walk around: a Wordle ticket at the gate, my career as a rollercoaster, projects out of a claw machine, and a skip button in every game.',
-    points: [
-      'About 1,200 automated tests; strict TypeScript throughout.',
-      'A Missions sheet and a guided "Take me there" walk for phone players.',
-    ],
+      'A pixel-art fairground: win a Wordle ticket at the gate, ride my career on a rollercoaster and pull projects out of a claw machine. Every game has a skip button, because nobody should need to be good at games to read a résumé.',
+    points: ['About 1,200 automated tests, in strict TypeScript.', 'Works on phones, with a guided walk to every attraction.'],
     stack: ['TypeScript', 'Phaser 3', 'Vite', 'Vitest'],
     links: [
       { label: 'Play it', href: '/portfolio/play/' },
@@ -196,15 +245,29 @@ export const PROJECTS: Project[] = [
     size: 'md',
   },
   {
+    id: 'healthcare',
+    name: 'Healthcare Assistance (AI/ML)',
+    kicker: 'FINAL-YEAR PROJECT · PAPER',
+    role: 'Team lead, supervised by Ms. Anjali Malik',
+    summary:
+      'A system that helps doctors make decisions with machine learning. It was my final-year project, and we wrote it up as a paper with my supervisor.',
+    points: [
+      'Validated the model with cross-validation on held-out data.',
+      'Built to support a doctor’s judgement, not to replace it.',
+      'Graded O, the top grade. My teammates picked me to lead again after our minor project.',
+    ],
+    stack: ['Python', 'Machine learning'],
+    links: [],
+    size: 'md',
+  },
+  {
     id: 'safestride',
     name: 'Safe Stride',
     kicker: 'PROJECT · SHIPPED',
     role: 'Built it',
-    summary: 'A one-stop safety solution for the elderly.',
-    points: [
-      'Real-time location tracking plus accelerometer-based fall detection.',
-      'Automatic SOS to emergency services, with a live map view.',
-    ],
+    summary:
+      'A safety app for elderly people. It tracks location in real time, spots falls with the phone’s accelerometer and sends an SOS to emergency services on its own.',
+    points: ['Location tracking, fall detection, automatic SOS and a live map, in one app.'],
     stack: ['Geolocation', 'Sensors', 'Twilio', 'Leaflet'],
     links: [{ label: 'GitHub', href: 'https://github.com/Naman-Gururani/Safe-Stride' }],
     size: 'md',
@@ -214,8 +277,8 @@ export const PROJECTS: Project[] = [
     name: 'Flight Delay Predictor',
     kicker: 'MINOR PROJECT',
     role: 'Team lead, guided by Ms. Anjali Malik',
-    summary: 'A machine-learning model that predicts flight delays, built as my minor project.',
-    points: ['Graded O (outstanding).'],
+    summary: 'My minor project: a machine-learning model that predicts flight delays. I led the team, and it was graded O.',
+    points: [],
     stack: ['Python', 'Machine learning'],
     links: [],
     size: 'md',
@@ -239,21 +302,34 @@ export const EDUCATION = {
 export const PUBLICATION = {
   title: 'Healthcare Assistance Using AIML',
   with: 'Ms. Anjali Malik, SRM Institute of Science and Technology',
-  note: 'Written up from the final-year major project I led: a decision-support system for doctors, validated with cross-validation on held-out data.',
+  note: 'Written up from the final-year project I led: a system that helps doctors make decisions, validated with cross-validation on held-out data.',
 } as const
+
+export const COURSEWORK: string[] = [
+  'Data Structures and Algorithms (DSA)',
+  'Operating System (OS)',
+  'Design and Analysis of Algorithms (DAA)',
+  'Database Management System (DBMS)',
+  'Computer Network (CN)',
+  'Software Engineering and Project Management (SEPM)',
+  'Object Oriented Programming (OOPS)',
+  'Artificial Intelligence (AI)',
+  'Network Security (NS)',
+  'Advanced Programming Practices (APP)',
+]
 
 export const ACTIVITIES: Activity[] = [
   {
     what: 'Class representative',
     where: 'B.Tech CSE, SRM IST',
     when: 'B.Tech',
-    detail: 'Coordinated between my section and the faculty.',
+    detail: 'The go-between for my section and the faculty.',
   },
   {
     what: 'Technical core team',
     where: 'GeeksforGeeks student chapter, SRM IST',
     when: '2022–2024',
-    detail: 'Led club events.',
+    detail: 'Ran club events.',
   },
   {
     what: 'Core team, management',
@@ -275,10 +351,10 @@ export const ACTIVITIES: Activity[] = [
 ]
 
 export const SKILLS: { label: string; items: string[] }[] = [
-  { label: 'Languages', items: ['Java', 'Python', 'SQL', 'C++'] },
+  { label: 'Languages', items: ['Java', 'Python', 'TypeScript', 'SQL', 'C++'] },
   { label: 'Streaming', items: ['Apache Kafka', 'Kafka Streams', 'Apache Flink', 'IBM MQ'] },
-  { label: 'Data', items: ['Redis', 'DynamoDB', 'Snowflake', 'Teradata'] },
-  { label: 'Platform', items: ['Spring Boot', 'AWS', 'Docker', 'Linux', 'ELK', 'Git'] },
+  { label: 'Data', items: ['Redis', 'DynamoDB', 'PostgreSQL', 'Snowflake', 'Teradata'] },
+  { label: 'Backend & platform', items: ['Spring Boot', 'NestJS', 'AWS', 'Docker', 'Linux', 'ELK', 'Git'] },
   { label: 'How I work', items: ['Spec-first design', 'AI-assisted development'] },
 ]
 
@@ -287,6 +363,8 @@ export const POSTS: Post[] = [
     title: 'Building a portfolio you can walk around',
     href: 'https://naman-gururani.github.io/blog/building-a-portfolio-thats-a-game/',
     date: '2026-09-01',
+    description: 'Why my portfolio is a pixel-art world built with Phaser, and what one palette, a day/night cycle and a Skip button taught me about shipping.',
+    tags: ['phaser', 'typescript', 'design'],
   },
 ]
 

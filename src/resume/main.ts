@@ -10,6 +10,7 @@ import '@fontsource/jetbrains-mono/500.css'
 import '@fontsource/jetbrains-mono/600.css'
 import './resume.css'
 import { wireCopy } from './copy'
+import { wireJourney } from './journey'
 import { activeSection } from './spy'
 import { THEME_KEY, initialTheme, nextTheme, type Theme } from './theme'
 import { tiltFor } from './tilt'
@@ -142,3 +143,4 @@ wireSpy()
 wireTheme()
 wirePrint()
 wireCopy(document)
+wireJourney()

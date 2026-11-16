@@ -82,3 +82,11 @@ describe('review fixes (v6 final review)', () => {
     expect(CSS).toMatch(/\.cred :focus-visible\s*\{[^}]*outline-color:\s*#e5c5ff/)
   })
 })
+
+describe('v6.1 regressions', () => {
+  it('styles `.open` only on the Barclays chapters (an old `.open` pill rule once turned every open chapter into an oval)', () => {
+    const selectors = BLOCKS.flatMap((b) => (b.prelude.startsWith('@') ? topBlocks(b.body).map((x) => x.prelude) : [b.prelude]))
+    for (const sel of selectors.join(',').split(','))
+      if (/\.open\b/.test(sel)) expect(sel.trim(), sel).toMatch(/\.chapter(\.\w+)*\.open|\.chapter:not\(\.open\)/)
+  })
+})

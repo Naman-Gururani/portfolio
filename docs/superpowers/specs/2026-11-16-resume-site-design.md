@@ -237,3 +237,36 @@ Everything is off under `prefers-reduced-motion`. Only transform and opacity ani
 - The ticket's screenshot crop.
 - Responsive breakpoints.
 - Copy wording within the facts and rules above.
+
+## 10. v6.1 — personal, not a job description (Naman, 2026-11-16, after launch)
+
+Naman's feedback on the live page, applied as written:
+- **The intro is about him, told as a story,** not his job:
+  - he loves coding and solving problems;
+  - he builds applications and is building Enlacey;
+  - he wants to meet people who want to build something of their own;
+  - he is open to new roles.
+  - His Barclays work is one or two sentences there, and is told in full in Experience.
+  - The old headline "I build the real-time systems that make payment data trustworthy" goes, everywhere.
+- **The card** reads "Data & Backend Engineer @ Barclays". It shows the college with the CGPA. It does not show the rank or the promotion. Enlacey is a link. A fact worth showing takes the rank's place: 3 open-source PRs merged.
+- **Interests** are real ones: backend, building apps end to end, problem solving, starting something of his own, open source, the gym.
+- **New section order:**
+  1. Intro
+  2. The game ticket ("Same résumé…")
+  3. Projects
+  4. Blog (tiles)
+  5. Education (with the paper)
+  6. Experience
+  7. Leadership & activities
+  8. Skills with relevant coursework
+  9. Contact
+- **"By the numbers" moves into Experience,** each number beside the story it comes from.
+- **Experience is "Barclays, so far":** chapters (2023 internship · 2024–25 full time and promoted · 2026 the payment lineage engine · the hackathon) that expand as you scroll to them. A sticky year rail sits beside them on desktop. Every chapter is open with JS off, under reduced motion and in print.
+- **New sources** (Naman pointed to them):
+  - his internship write-up, pasted in chat (Barclays Global Service Center, DevOps Intern, Jun–Aug 2023);
+  - his relevant-coursework list, pasted in chat;
+  - `C:\AntiG\study\context\about-me.md` (Haldwani is home; Enlacey operates in Haldwani and Pune; the gym);
+  - `C:\AntiG\hacktober\docs\status.md` (3 merged PRs: conductor #1654, docling-java #691, docling #4340);
+  - the Barclays letter draft in `C:\AntiG\college\letters\` (the year-by-year work).
+- **Copy voice:** casual and human. No cheesy self-praise ("without being asked"). No AI tells.
+- **Job-seeking copy is wanted.** Applications, tests and target schools still stay off.

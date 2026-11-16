@@ -1,21 +1,22 @@
 // Renders the résumé page from the record, at build time (vite-plugin-resume.ts).
 // Pure string-in, string-out: no DOM, no JS needed in the browser to read it.
 // The markup contract (ids, classes, data-attributes) is what resume.css styles
-// and main.ts wires up — see plan Task 3.
+// and main.ts / journey.ts wire up. Order (spec §10): intro, the game ticket,
+// projects, blog, education, experience, leadership, skills, contact.
 import {
   ACTIVITIES,
+  CARD,
+  COURSEWORK,
   EDUCATION,
-  EXPERIENCE,
-  METRICS,
+  JOURNEY,
   PERSON,
   POSTS,
   PROJECTS,
   PUBLICATION,
   SKILLS,
   UPDATED,
-  type Bullet,
+  type Chapter,
   type Project,
-  type Role,
 } from '../data/resume'
 
 export const SITE = 'https://naman-gururani.github.io/portfolio/'
@@ -35,12 +36,17 @@ export function fmtDate(d: string): string {
 }
 
 const time = (d: string) => `<time datetime="${esc(d)}">${esc(fmtDate(d))}</time>`
-const range = (r: { from: string; to: string | null }) =>
-  `${time(r.from)}<span class="dash" aria-hidden="true">–</span><span class="sr-only"> to </span>${r.to ? time(r.to) : '<span>Present</span>'}`
 
 const isExternal = (href: string) => /^https?:\/\//.test(href)
-const link = (href: string, label: string, cls = '') =>
-  `<a${cls ? ` class="${cls}"` : ''} href="${esc(href)}"${isExternal(href) ? ' target="_blank" rel="noopener"' : ''}>${esc(label)}</a>`
+const attrs = (href: string) => `href="${esc(href)}"${isExternal(href) ? ' target="_blank" rel="noopener"' : ''}`
+const link = (href: string, label: string, cls = '') => `<a${cls ? ` class="${cls}"` : ''} ${attrs(href)}>${esc(label)}</a>`
+
+/** Escape a line of copy, then turn its [label](href) tokens into links. */
+export function prose(s: string): string {
+  return esc(s).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, label: string, href: string) =>
+    `<a ${attrs(href.replace(/&amp;/g, '&'))}>${label}</a>`,
+  )
+}
 
 const chips = (items: readonly string[], cls = 'chip') =>
   `<ul class="chips">${items.map((i) => `<li class="${cls}">${esc(i)}</li>`).join('')}</ul>`
@@ -54,12 +60,12 @@ ${inner}
 }
 
 const NAV: [string, string][] = [
-  ['experience', 'Experience'],
   ['projects', 'Projects'],
+  ['blog', 'Blog'],
   ['education', 'Education'],
-  ['publication', 'Paper'],
-  ['leadership', 'Leadership'],
-  ['writing', 'Writing'],
+  ['experience', 'Experience'],
+  ['leadership', 'Activities'],
+  ['skills', 'Skills'],
   ['contact', 'Contact'],
 ]
 
@@ -83,7 +89,7 @@ function bar(): string {
 }
 
 function hero(): string {
-  const now = EXPERIENCE.roles[0]
+  const { studied, building, openSource } = CARD
   return `<section id="top" class="hero" aria-label="Introduction">
 <div class="hero-grid">
 <div class="cred-stage">
@@ -91,15 +97,14 @@ function hero(): string {
 <div class="cred-foil" aria-hidden="true"></div>
 <div class="cred-glare" aria-hidden="true"></div>
 <div class="cred-body">
-<div class="cred-top"><span class="chipcard" aria-hidden="true"><i></i><i></i><i></i></span><span class="serial">PS-ID-0824</span><span class="live"><span class="dot" aria-hidden="true"></span>${esc(PERSON.employer)} · since 2023</span></div>
-<p class="cred-kicker">Payments · Streaming · Backend</p>
+<div class="cred-top"><span class="chipcard" aria-hidden="true"><i></i><i></i><i></i></span><span class="serial">PS-ID-0824</span><span class="live"><span class="dot" aria-hidden="true"></span>Open to new roles</span></div>
+<p class="cred-kicker">${esc(PERSON.kicker)}</p>
 <h1>${esc(PERSON.name)}</h1>
-<p class="cred-role">${esc(PERSON.title)}<span class="cred-at"> · ${esc(PERSON.employer)} · ${esc(PERSON.location)}</span></p>
+<p class="cred-role">${esc(PERSON.title)} @ ${esc(PERSON.employer)}</p>
 <dl class="cred-facts">
-<div><dt>Engineer</dt><dd>since ${esc(fmtDate(EXPERIENCE.roles[1].from))} · promoted ${esc(fmtDate(now.from))}</dd></div>
-<div><dt>Degree</dt><dd>B.Tech CSE · <span class="nw">${esc(EDUCATION.cgpa)}</span></dd></div>
-<div><dt>Rank</dt><dd>Top 5% of 4,000+</dd></div>
-<div><dt>Building</dt><dd>Enlacey · Google Play</dd></div>
+<div class="wide"><dt>Studied</dt><dd><span class="cred-school">${esc(studied.school)}</span><span class="cred-sub">${esc(studied.detail)}</span></dd></div>
+<div><dt>Building</dt><dd>${link(building.href, `${building.label} ↗`, 'cred-link')}<span class="cred-sub">${esc(building.detail)}</span></dd></div>
+<div><dt>Open source</dt><dd>${link(openSource.href, openSource.label, 'cred-link')}<span class="cred-sub">${esc(openSource.detail)}</span></dd></div>
 </dl>
 <div class="cred-actions">
 <a class="btn primary" href="mailto:${esc(PERSON.email)}">Email</a>
@@ -113,89 +118,14 @@ ${link(PERSON.linkedin, 'LinkedIn', 'btn')}
 </article>
 </div>
 <div class="hero-copy">
-<p class="eyebrow">résumé · updated ${esc(UPDATED)}</p>
+<p class="eyebrow">${esc(PERSON.hello)}</p>
 <p class="headline">${PERSON.headline.map((l, i, a) => (i === a.length - 1 ? `<span class="holo-word">${esc(l)}</span>` : `<span>${esc(l)}</span> `)).join('')}</p>
-<p class="open"><span class="dot" aria-hidden="true"></span><b>Open to new roles</b><span class="open-list"> · ${PERSON.openTo.map(esc).join(' · ')}</span></p>
-<p class="lede">${esc(PERSON.summary)}</p>
-${PERSON.about.map((p) => `<p class="about">${esc(p)}</p>`).join('\n')}
-<div class="interests"><span class="label">Interests</span>${chips(PERSON.interests)}</div>
+<div class="story">${PERSON.story.map((p) => `<p>${prose(p)}</p>`).join('\n')}</div>
+<p class="connect"><span>${esc(PERSON.connect)}</span> <a class="connect-go" href="mailto:${esc(PERSON.email)}">Say hello <span aria-hidden="true">→</span></a></p>
+<div class="interests"><span class="label">What I’m into</span>${chips(PERSON.interests)}</div>
 </div>
 </div>
 </section>`
-}
-
-function impact(): string {
-  return section(
-    'impact',
-    '00',
-    'By the numbers',
-    `<ul class="metrics">${METRICS.map(
-      (m) => `<li class="metric glass">
-<p class="metric-value">${esc(m.value)}<span class="metric-unit"> ${esc(m.unit)}</span></p>
-<p class="metric-label">${esc(m.label)}</p>
-<p class="metric-basis">${esc(m.basis)}</p>
-</li>`,
-    ).join('')}</ul>`,
-  )
-}
-
-function roleItem(r: Role, i: number): string {
-  const badge = i === 0 ? '<span class="badge holo">Promoted</span>' : r.title.includes('Intern') ? '<span class="badge">Converted to full time</span>' : ''
-  return `<li class="role${i === 0 ? ' current' : ''}">
-<span class="node" aria-hidden="true"></span>
-<p class="role-when">${range(r)}</p>
-<p class="role-title">${esc(r.title)}${r.grade ? ` <span class="grade">${esc(r.grade)}</span>` : ''} ${badge}</p>
-${r.note ? `<p class="role-note">${esc(r.note)}</p>` : ''}
-</li>`
-}
-
-function bulletItem(b: Bullet, i: number): string {
-  const how = b.how
-    ? `<details class="how"><summary>How it works</summary><ul>${b.how.map((h) => `<li>${esc(h)}</li>`).join('')}</ul></details>`
-    : ''
-  return `<li class="win">
-<span class="win-no" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
-<div class="win-body"><p><strong>${esc(b.lead)}</strong> ${esc(b.text)}</p>${how}${b.tags ? chips(b.tags, 'chip sm') : ''}</div>
-</li>`
-}
-
-function experience(): string {
-  const top = EXPERIENCE.bullets.slice(0, 3)
-  const rest = EXPERIENCE.bullets.slice(3)
-  return section(
-    'experience',
-    '01',
-    'Experience',
-    `<article class="job glass">
-<header class="job-head"><h3>${esc(EXPERIENCE.employer)}</h3><p class="job-where">${esc(EXPERIENCE.place)} · <time datetime="2023-06">2023</time>–present</p><span class="serial" aria-hidden="true">PS-EXP-01</span></header>
-<div class="job-grid">
-<ol class="timeline" reversed aria-label="Roles at ${esc(EXPERIENCE.employer)}, newest first">${EXPERIENCE.roles.map(roleItem).join('')}</ol>
-<div class="wins">
-<ol class="win-list">${top.map(bulletItem).join('')}</ol>
-<details class="more"><summary>More from this role <span class="count">${rest.length}</span></summary>
-<ol class="win-list" start="4">${rest.map((b, i) => bulletItem(b, i + 3)).join('')}</ol>
-</details>
-</div>
-</div>
-</article>`,
-  )
-}
-
-function projectCard(p: Project, i: number): string {
-  return `<article class="card glass ${p.size === 'lg' ? 'lg' : ''}" id="p-${esc(p.id)}">
-<span class="serial" aria-hidden="true">PS-${String(i + 1).padStart(3, '0')}</span>
-<p class="card-kicker">${esc(p.kicker)}${p.when ? ` · <time datetime="${esc(p.when)}">${esc(p.when)}</time>` : ''}</p>
-<h3>${esc(p.name)}</h3>
-<p class="card-summary">${esc(p.summary)}</p>
-<p class="card-role"><span class="label">My part</span> ${esc(p.role)}</p>
-<ul class="card-points">${p.points.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
-${chips(p.stack, 'chip sm')}
-${p.links.length ? `<p class="card-links">${p.links.map((l) => link(l.href, l.label, 'arrow')).join('')}</p>` : ''}
-</article>`
-}
-
-function projects(): string {
-  return section('projects', '02', 'Projects', `<div class="cards">${PROJECTS.map(projectCard).join('')}</div>`)
 }
 
 function ticket(): string {
@@ -205,7 +135,7 @@ function ticket(): string {
 <span class="ticket-main">
 <span class="ticket-kicker">Naman’s World Fair · a pixel-art game</span>
 <span class="ticket-title">Same résumé. Now walk around it.</span>
-<span class="ticket-copy">A Wordle ticket at the gate, my career as a rollercoaster, projects out of a claw machine, and a skip button in every game. Works on phones.</span>
+<span class="ticket-copy">Win a Wordle ticket at the gate, ride my career on a rollercoaster and pull projects out of a claw machine. Every game can be skipped, and it works on phones.</span>
 <span class="ticket-go">Enter the fair <span aria-hidden="true">▶</span></span>
 </span>
 <span class="ticket-shot"><img src="/portfolio/resume/fair.webp" width="480" height="300" loading="lazy" decoding="async" alt="The entrance plaza of the game’s pixel-art fairground: a fountain, the Word Forge stall, snack stands, bunting and the Naman’s World Fair gate."></span>
@@ -213,8 +143,44 @@ function ticket(): string {
 </section>`
 }
 
+function projectCard(p: Project, i: number): string {
+  return `<article class="card glass ${p.size === 'lg' ? 'lg' : ''}" id="p-${esc(p.id)}">
+<span class="serial" aria-hidden="true">PS-${String(i + 1).padStart(3, '0')}</span>
+<p class="card-kicker">${esc(p.kicker)}${p.when ? ` · <time datetime="${esc(p.when)}">${esc(p.when)}</time>` : ''}</p>
+<h3>${esc(p.name)}</h3>
+<p class="card-summary">${esc(p.summary)}</p>
+<p class="card-role"><span class="label">My part</span> ${esc(p.role)}</p>
+${p.points.length ? `<ul class="card-points">${p.points.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+${chips(p.stack, 'chip sm')}
+${p.links.length ? `<p class="card-links">${p.links.map((l) => link(l.href, l.label, 'arrow')).join('')}</p>` : ''}
+</article>`
+}
+
+function projects(): string {
+  return section('projects', '01', 'Projects', `<div class="cards">${PROJECTS.map(projectCard).join('')}</div>`)
+}
+
+function blog(): string {
+  return section(
+    'blog',
+    '02',
+    'Blog',
+    `<div class="blog-grid">${POSTS.map(
+      (p) => `<article class="blog-tile glass">
+<p class="blog-meta">${time(p.date)}${p.tags.length ? ` · ${p.tags.map(esc).join(' · ')}` : ''}</p>
+<h3>${link(p.href, p.title, 'blog-title')}</h3>
+<p class="blog-desc">${esc(p.description)}</p>
+<p class="blog-go" aria-hidden="true">Read →</p>
+</article>`,
+    ).join('')}
+<a class="blog-all glass" ${attrs(PERSON.blog)}><span class="blog-all-k">The blog</span><span class="blog-all-t">Everything I’ve written, and what’s next</span><span class="blog-go">All posts →</span></a>
+</div>`,
+  )
+}
+
 function education(): string {
   const e = EDUCATION
+  const p = PUBLICATION
   return section(
     'education',
     '03',
@@ -230,21 +196,55 @@ function education(): string {
 <div><dt>Completed</dt><dd>${esc(e.completed)}</dd></div>
 </dl>
 <p class="edu-courses"><span class="label">Selected grades</span> ${e.courses.map((c) => `${esc(c.name)}: <b>${esc(c.grade)}</b>`).join(' · ')} · Major project: <b>O</b> · Minor project: <b>O</b></p>
+<div class="paper" id="paper">
+<p class="label">Paper</p>
+<p class="paper-title">“${esc(p.title)}”</p>
+<p class="paper-with">Co-authored with ${esc(p.with)}</p>
+<p class="paper-note">${esc(p.note)}</p>
+</div>
 </article>`,
   )
 }
 
-function publication(): string {
-  const p = PUBLICATION
+function chapter(c: Chapter): string {
+  const metrics = c.metrics.length
+    ? `<ul class="ch-metrics">${c.metrics.map((m) => `<li class="ch-metric"><b>${esc(m.value)}</b><span>${esc(m.label)}</span></li>`).join('')}</ul>`
+    : ''
+  const hard = c.hard
+    ? `<div class="ch-hard"><p class="label">Why it’s hard</p><ul>${c.hard.map((h) => `<li>${esc(h)}</li>`).join('')}</ul></div>`
+    : ''
+  const points = c.points.length
+    ? `<div class="ch-points"><p class="label">${c.hard ? 'How I built it' : 'What I did'}</p><ul>${c.points.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>`
+    : ''
+  const more = [hard, points, c.outcome ? `<p class="ch-outcome">${esc(c.outcome)}</p>` : '', c.tags.length ? chips(c.tags, 'chip sm') : '']
+    .filter(Boolean)
+    .join('\n')
+  return `<li class="chapter glass" id="${c.id}">
+<span class="ch-node" aria-hidden="true"></span>
+<div class="ch-head">
+<p class="ch-when"><time datetime="${esc(c.datetime)}">${esc(c.when)}</time></p>
+<h3 class="ch-title">${esc(c.title)}</h3>
+<p class="ch-role">${esc(c.role)}</p>
+<p class="ch-lead">${esc(c.lead)}</p>
+${metrics}
+${more ? `<button type="button" class="ch-toggle js-only" aria-expanded="true" aria-controls="${c.id}-more">Read the details</button>` : ''}
+</div>
+${more ? `<div class="ch-more" id="${c.id}-more"><div class="ch-inner">${more}</div></div>` : ''}
+</li>`
+}
+
+function experience(): string {
   return section(
-    'publication',
+    'experience',
     '04',
-    'Publication',
-    `<article class="paper glass">
-<p class="paper-title">“${esc(p.title)}”</p>
-<p class="paper-with">Co-authored with ${esc(p.with)}</p>
-<p class="paper-note"><span class="label">My part</span> ${esc(p.note)}</p>
-</article>`,
+    'Experience',
+    `<p class="sec-lede">Barclays, so far: from intern to owning the payment lineage engine in three years.</p>
+<div class="journey" data-journey>
+<nav class="journey-rail" aria-label="My years at Barclays"><ol>${JOURNEY.map(
+      (c) => `<li><a href="#${c.id}"><span class="rail-dot" aria-hidden="true"></span><span class="rail-year">${esc(c.rail)}</span><span class="rail-title">${esc(c.title)}</span></a></li>`,
+    ).join('')}</ol></nav>
+<ol class="chapters">${JOURNEY.map(chapter).join('')}</ol>
+</div>`,
   )
 }
 
@@ -259,34 +259,26 @@ function leadership(): string {
   )
 }
 
-function writing(): string {
-  return section(
-    'writing',
-    '06',
-    'Writing',
-    `<ul class="posts">${POSTS.map(
-      (p) => `<li class="post glass">${link(p.href, p.title, 'post-title')}<p class="post-date">${time(p.date)}</p></li>`,
-    ).join('')}</ul>
-<p class="more-link">${link(PERSON.blog, 'All posts on the blog', 'arrow')}</p>`,
-  )
-}
-
 function skills(): string {
   return section(
     'skills',
-    '07',
-    'Skills',
-    `<dl class="skills glass">${SKILLS.map((g) => `<div><dt>${esc(g.label)}</dt><dd>${chips(g.items)}</dd></div>`).join('')}</dl>`,
+    '06',
+    'Skills & coursework',
+    `<div class="skills-grid">
+<dl class="skills glass">${SKILLS.map((g) => `<div><dt>${esc(g.label)}</dt><dd>${chips(g.items)}</dd></div>`).join('')}</dl>
+<div class="coursework glass"><p class="label">Relevant coursework</p><ul>${COURSEWORK.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></div>
+</div>`,
   )
 }
 
 function contact(): string {
   return section(
     'contact',
-    '08',
+    '07',
     'Contact',
     `<div class="contact glass">
-<p class="contact-line">Looking for a backend, data or Java engineer? I am open to new roles, and happy to talk about streams, lineage or marketplaces.</p>
+<p class="contact-line">Building something, thinking about it, or hiring? Let’s talk.</p>
+<p class="contact-sub">I’m open to new roles in ${esc(PERSON.openTo.slice(0, -1).join(', '))} and ${esc(PERSON.openTo[PERSON.openTo.length - 1].toLowerCase())}, and always happy to meet people who want to build something of their own.</p>
 <p class="contact-mail"><a href="mailto:${esc(PERSON.email)}">${esc(PERSON.email)}</a></p>
 <p class="contact-links">${link(PERSON.github, 'GitHub', 'arrow')}${link(PERSON.linkedin, 'LinkedIn', 'arrow')}${link(PERSON.blog, 'Blog', 'arrow')}${link(PERSON.site, 'Homepage', 'arrow')}</p>
 </div>`,
@@ -310,14 +302,12 @@ export function renderResume(): string {
     bar(),
     '<main id="main">',
     hero(),
-    impact(),
-    experience(),
-    projects(),
     ticket(),
+    projects(),
+    blog(),
     education(),
-    publication(),
+    experience(),
     leadership(),
-    writing(),
     skills(),
     contact(),
     '</main>',
@@ -328,7 +318,7 @@ export function renderResume(): string {
 /** Title, description, canonical, link previews and structured data. */
 export function renderHead(): string {
   const title = `${PERSON.name} — ${PERSON.title}`
-  const desc = `${PERSON.name}: ${PERSON.title.toLowerCase()} at ${PERSON.employer}, building real-time payment data systems in Java, Kafka and Flink. B.Tech CSE, CGPA 9.63/10. Founder of Enlacey.`
+  const desc = `${PERSON.name}: a software engineer from ${PERSON.home} who loves hard problems and building apps. ${PERSON.title} at ${PERSON.employer}, founder of Enlacey, open to new roles.`
   const img = `${SITE}og.jpg`
   const ld = {
     '@context': 'https://schema.org',
@@ -341,10 +331,11 @@ export function renderHead(): string {
       jobTitle: PERSON.title,
       worksFor: { '@type': 'Organization', name: PERSON.employer },
       alumniOf: { '@type': 'CollegeOrUniversity', name: EDUCATION.school },
+      homeLocation: { '@type': 'Place', name: `${PERSON.home}, India` },
       email: `mailto:${PERSON.email}`,
       url: SITE,
-      sameAs: [PERSON.github, PERSON.linkedin, PERSON.site, 'https://play.google.com/store/apps/details?id=com.enlacey.app'],
-      knowsAbout: ['Apache Kafka', 'Apache Flink', 'Stream processing', 'Data lineage', 'Java', 'Distributed systems'],
+      sameAs: [PERSON.github, PERSON.linkedin, PERSON.site, CARD.building.href],
+      knowsAbout: ['Backend engineering', 'Apache Kafka', 'Apache Flink', 'Distributed systems', 'Java', 'Building apps'],
     },
   }
   return [

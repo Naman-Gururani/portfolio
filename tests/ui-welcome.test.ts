@@ -114,7 +114,7 @@ describe('welcome card', () => {
     expect(txt('.welcome-name')).toBe(PROFILE.name)
     expect(txt('.welcome-role')).toBe(`${PROFILE.role} · ${PROFILE.company} · ${PROFILE.location}`)
     // the same line, as the brief spells it
-    expect(txt('.welcome-role')).toBe('Data and Backend Engineer · Barclays · India')
+    expect(txt('.welcome-role')).toBe('Data & Backend Engineer · Barclays · India')
     expect(txt('.welcome-name')).toBe('Naman Gururani')
 
     const src = readFileSync(resolve(process.cwd(), 'src/ui/welcome.ts'), 'utf8')

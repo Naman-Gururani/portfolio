@@ -49,7 +49,7 @@ const allText = `${allCardText}\n${allDialogueText}`
 describe('profile', () => {
   it('names the person, the role and where they are', () => {
     expect(PROFILE.name).toBe('Naman Gururani')
-    expect(PROFILE.role).toBe('Data and Backend Engineer')
+    expect(PROFILE.role).toBe('Data & Backend Engineer')
     expect(PROFILE.company).toBe('Barclays')
     expect(PROFILE.location).toBe('India')
     expect(PROFILE.email).toBe('gururaninaman@gmail.com')
@@ -89,10 +89,10 @@ describe('the résumé record', () => {
   })
 
   it('carries the new title everywhere, and the old one nowhere', () => {
-    expect(PERSON.title).toBe('Data and Backend Engineer')
-    expect(zone('about').content.sub).toBe('Data and Backend Engineer · Barclays')
-    expect(factOf(zone('about'), 'Now')).toBe('Data and Backend Engineer · Barclays')
-    expect((zone('experience').content.body ?? [])[0]).toBe('⭐ Data and Backend Engineer · Barclays · Aug 2024 — now')
+    expect(PERSON.title).toBe('Data & Backend Engineer')
+    expect(zone('about').content.sub).toBe('Data & Backend Engineer · Barclays')
+    expect(factOf(zone('about'), 'Now')).toBe('Data & Backend Engineer · Barclays')
+    expect((zone('experience').content.body ?? [])[0]).toBe('⭐ Data & Backend Engineer · Barclays · Aug 2024 — now')
     expect((zone('experience').content.body ?? [])[2]).toBe('🛠️ DevOps Intern · Barclays · Jun — Aug 2023')
     expect(allText).not.toMatch(/Software Development Engineer|\bSDE\b/)
   })
@@ -192,7 +192,7 @@ describe('every zone', () => {
     // The card is the record's summary, shortened: every fact on it is one the
     // record states too.
     const body = (vault.content.body ?? []).join(' ')
-    for (const fact of ['India-first', 'local services', 'Haldwani', 'Google Play since October 2026', 'iPhone']) {
+    for (const fact of ['Haldwani', 'Pune', 'since October 2026', 'iPhone']) {
       expect(body, `the Enlacey card no longer says "${fact}"`).toContain(fact)
       expect(enlacey.summary, `resume.ts no longer says "${fact}"`).toContain(fact)
     }
